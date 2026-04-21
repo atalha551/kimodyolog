@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odyolog Yarışması</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&display=swap" rel="stylesheet">
+
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        overflow: hidden; 
+        background-color: #2b2b2b;
+    }
+
+    /* --- ORTAK ARKA PLAN --- */
+    .ekran {
+        background-image: url('3.png.png'); 
+        background-position: center top; 
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        display: none; 
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+    }
+
+    #giris-container { display: flex; }
+
+    /* --- ORTAK YAZI STİLLERİ --- */
+    .ust-bilgi {
+        position: absolute;
+        top: 30px; 
+        width: 100%;
+        text-align: center;
+        font-family: 'Permanent Marker', cursive;
+        color: #ffffff;
+        font-size: 1.6rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        z-index: 20;
+        animation: fadeInDown 1s ease-out;
+    }
+
+    .isim-etiketi {
+        position: absolute;
+        top: 70px; 
+        width: 100%;
+        text-align: center;
+        font-family: 'Permanent Marker', cursive; 
+        color: #fca311; 
+        font-size: 1.1rem; 
+        letter-spacing: 1px;
+        text-shadow: 1px 1px 3px rgba(0,0,0,1); 
+        z-index: 20;
+        animation: fadeInDown 1.2s ease-out;
+    }
+    
+    .ana-baslik {
+        font-family: 'Bangers', cursive;
+        font-size: 5rem;
+        color: #ffffff;
+        margin: 0;
+        line-height: 1.1;
+        text-shadow: 3px 3px 0px #000;
+        transform: rotate(-2deg);
+        animation: scaleIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .alt-baslik {
+        font-family: 'Permanent Marker', cursive;
+        font-size: 1.8rem;
+        color: #fca311;
+        margin-top: 20px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        animation: fadeInUp 1s ease-out;
+    }
+    
+    /* --- BUTONLAR --- */
+    .buton {
+        margin-top: 20px;
+        padding: 15px 40px;
+        font-family: 'Bangers', cursive;
+        font-size: 24px;
+        background-color: #fca311;
+        border: none;
+        cursor: pointer;
+        border-radius: 10px;
+        color: black;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        animation: fadeInUp 1.2s ease-out;
+    }
+
+    .buton:hover { 
+        background-color: #ffb703; 
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 15px rgba(252, 163, 17, 0.4);
+    }
+    
+    .buton:active { 
+        transform: scale(0.95) translateY(1px); 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* --- İSİM GİRİŞ ALANI --- */
+    .input-kutusu {
+        padding: 15px;
+        font-size: 1.5rem;
+        border-radius: 10px;
+        border: 3px solid #fca311;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        font-family: 'Permanent Marker', cursive;
+        text-align: center;
+        width: 300px;
+        outline: none;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .input-kutusu:focus {
+        border-color: #ffb703;
+        box-shadow: 0 0 15px rgba(252, 163, 17, 0.5);
+        background: rgba(0,0,0,0.85);
+    }
+
+    /* --- SINIF SEÇİM ALANI --- */
+    .sinif-baslik {
+        font-family: 'Permanent Marker', cursive;
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        text-shadow: 1px 1px 3px rgba(0,0,0,1);
+    }
+
+    .sinif-butonlar {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .sinif-btn {
+        background: rgba(0,0,0,0.7);
+        border: 2px solid #fca311;
+        color: white;
+        font-family: 'Bangers', cursive;
+        font-size: 1.5rem;
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .sinif-btn:hover {
+        background: rgba(252, 163, 17, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .sinif-btn.secildi {
+        background: #fca311;
+        color: black;
+        border-color: white;
+        box-shadow: 0 0 15px rgba(252, 163, 17, 0.8);
+        transform: scale(1.1);
+    }
+
+    /* --- OYUN ALANI STİLLERİ --- */
+    .overlay {
+        background: rgba(0, 0, 0, 0.85);
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        box-sizing: border-box;
+        position: relative; 
+        animation: fadeIn 0.5s ease-out;
+        transition: background-color 1s ease; 
+    }
+
+    /* KARARTMA PERDESİ */
+    #karartma-perdesi {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.98);
+        z-index: 50; 
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 1s ease;
+    }
+
+    /* DOĞRU/YANLIŞ MESAJI (ORTADA ÇIKACAK) */
+    #feedback-mesaj {
+        position: absolute;
+        font-family: 'Bangers', cursive;
+        font-size: 6rem;
+        z-index: 100;
+        text-shadow: 4px 4px 10px rgba(0,0,0,1);
+        display: none; 
+        animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popUp {
+        0% { transform: scale(0); opacity: 0; }
+        80% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(1); }
+    }
+
+    /* --- YENİ EKRAN DÜZENİ (SOL/SAĞ) --- */
+    .oyun-icerik {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        max-width: 1200px;
+    }
+
+    .oyun-sol {
+        flex: 7;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .oyun-sag {
+        flex: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 30px;
+        border-left: 3px solid rgba(252, 163, 17, 0.3);
+    }
+
+    .bilgi-paneli {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        color: white;
+        font-family: 'Bangers', cursive;
+        font-size: 1.5rem;
+        animation: fadeIn 1s ease-out;
+    }
+
+    /* --- SÜRE BARI --- */
+    .sure-container {
+        width: 80%;
+        max-width: 800px;
+        height: 12px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        margin-bottom: 15px;
+        overflow: hidden;
+        border: 1px solid rgba(252, 163, 17, 0.3);
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    .sure-bar {
+        height: 100%;
+        width: 100%;
+        background-color: #2ecc71; 
+        transition: width 1s linear, background-color 0.5s ease;
+    }
+
+    .soru-kutusu {
+        background: linear-gradient(180deg, #101035 0%, #000000 100%);
+        border: 2px solid #fca311;
+        color: white;
+        width: 80%;
+        max-width: 800px;
+        padding: 30px;
+        text-align: center;
+        border-radius: 20px;
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+        box-shadow: 0 0 15px rgba(252, 163, 17, 0.5);
+        backdrop-filter: blur(5px);
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    .siklar-alani {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        width: 80%;
+        max-width: 800px;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .sik-buton {
+        background: linear-gradient(90deg, #14213d 0%, #000000 100%);
+        border: 1px solid #6c757d;
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        text-align: left;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sik-buton:hover {
+        background: #fca311;
+        color: black;
+        border-color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(252, 163, 17, 0.4);
+    }
+
+    .sik-buton.secilen-cevap {
+        background: #f39c12 !important; 
+        color: black !important;
+        border-color: white !important;
+        transform: scale(1.03);
+        box-shadow: 0 0 20px rgba(243, 156, 18, 0.8);
+    }
+
+    .sik-buton.dogru-cevap {
+        background: #2ecc71 !important; 
+        color: white !important;
+        border-color: #2ecc71 !important;
+        transform: scale(1.02);
+        box-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
+    }
+
+    .sik-buton.yanlis-cevap {
+        background: #e74c3c !important; 
+        color: white !important;
+        border-color: #e74c3c !important;
+        animation: shake 0.4s ease-in-out;
+        box-shadow: 0 0 20px rgba(231, 76, 60, 0.6);
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        50% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+    }
+
+    .tiklama-engelle {
+        pointer-events: none;
+    }
+
+    .sik-harf {
+        font-weight: bold;
+        color: #fca311;
+        margin-right: 10px;
+        transition: color 0.3s ease;
+    }
+    
+    .sik-buton:hover .sik-harf { color: black; }
+    
+    .sik-buton.secilen-cevap .sik-harf,
+    .sik-buton.dogru-cevap .sik-harf,
+    .sik-buton.yanlis-cevap .sik-harf { color: white; }
+
+    /* --- PUAN AĞACI --- */
+    .puan-agaci {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column-reverse; 
+        gap: 8px;
+    }
+
+    .puan-agaci li {
+        padding: 10px 15px;
+        font-family: 'Bangers', cursive;
+        font-size: 1.5rem;
+        color: #ccc;
+        border-radius: 8px;
+        text-align: right;
+        transition: 0.3s;
+        border: 1px solid transparent;
+        letter-spacing: 1px;
+    }
+
+    .puan-agaci li.aktif {
+        background-color: #fca311;
+        color: #000;
+        transform: scale(1.05);
+        box-shadow: 0 0 10px rgba(252, 163, 17, 0.5);
+    }
+
+    .puan-agaci li.baraj {
+        color: #e2d810;
+        border-color: rgba(226, 216, 16, 0.5);
+    }
+
+    .puan-agaci li.aktif.baraj {
+        color: #000;
+        background-color: #e2d810;
+        border-color: #fff;
+    }
+
+    /* --- SKOR TABLOSU --- */
+    .skor-tablosu {
+        background: rgba(0, 0, 0, 0.8);
+        border: 2px solid #fca311;
+        border-radius: 15px;
+        padding: 20px;
+        width: 350px;
+        margin-top: 20px;
+        text-align: left;
+        animation: scaleIn 0.8s ease-out;
+    }
+
+    .skor-satir {
+        display: flex;
+        justify-content: space-between;
+        color: white;
+        font-family: 'Permanent Marker', cursive;
+        font-size: 1.2rem;
+        border-bottom: 1px solid #555;
+        padding: 10px 0;
+        transition: background-color 0.3s;
+    }
+    
+    .skor-satir:hover {
+        background-color: rgba(252, 163, 17, 0.1);
+    }
+    
+    .skor-baslik {
+        color: #fca311;
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 10px;
+        font-family: 'Bangers', cursive;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.8) rotate(-2deg); }
+        to { opacity: 1; transform: scale(1) rotate(-2deg); }
+    }
+
+    /* --- JOKERLER --- */
+    .joker-kapsayici {
+        width: 100%;
+        margin-bottom: 20px;
+        background: rgba(0, 0, 0, 0.6);
+        border: 2px solid #fca311;
+        border-radius: 15px;
+        padding: 15px;
+        box-sizing: border-box;
+        text-align: center;
+        animation: fadeInDown 0.8s ease-out;
+    }
+
+    .joker-baslik {
+        color: white;
+        font-family: 'Bangers', cursive;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+    }
+
+    .joker-butonlar {
+        display: flex;
+        justify-content: space-around;
+        gap: 5px;
+    }
+
+    .joker-btn {
+        background: linear-gradient(180deg, #fca311 0%, #d48a0f 100%);
+        border: 1px solid #fff;
+        border-radius: 50%;
+        width: 55px;
+        height: 55px;
+        font-family: 'Bangers', cursive;
+        font-size: 0.9rem;
+        color: black;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        font-weight: bold;
+        line-height: 1.1;
+    }
+
+    .joker-btn:hover:not(:disabled) {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(252, 163, 17, 0.8);
+    }
+
+    .joker-btn:disabled {
+        background: #555 !important;
+        color: #888 !important;
+        border-color: #444 !important;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+
+    .joker-btn.kilitli {
+        background: #444 !important;
+        color: #777 !important;
+        border-color: #333 !important;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+    
+    .joker-btn.aktif-joker {
+        border: 3px solid #2ecc71 !important;
+        box-shadow: 0 0 15px #2ecc71;
+    }
+
+    /* Seyirci Sayacı Yuvarlak */
+    #seyirci-modal {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.95);
+        border: 4px solid #fca311;
+        border-radius: 50%;
+        width: 250px;
+        height: 250px;
+        z-index: 200;
+        color: white;
+        font-family: 'Bangers', cursive;
+        text-align: center;
+        box-shadow: 0 0 40px #fca311;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sayac-baslik {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+    }
+
+    .sayac-cember {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: conic-gradient(#fca311 100%, transparent 0);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sayac-ic {
+        width: 100px;
+        height: 100px;
+        background: #000;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3rem;
+        color: #fca311;
+    }
+
+    /* --- YENİ EKLENEN ANİMASYONLU YAZILAR VE BUTON --- */
+    .animasyon-yazi {
+        position: absolute;
+        font-family: 'Bangers', cursive;
+        color: #fca311;
+        z-index: 150;
+        text-shadow: 0 0 20px #fca311, 4px 4px 10px rgba(0,0,0,1);
+        display: none;
+        text-align: center;
+        width: 100%;
+        animation: odulPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    #baraj-mesaj {
+        font-size: 4rem;
+        top: 25%;
+    }
+    
+    #odul-mesaj {
+        font-size: 3rem;
+        top: 45%;
+    }
+
+    #devam-buton {
+        position: absolute;
+        bottom: 15%;
+        z-index: 200;
+        display: none;
+        animation: fadeInUp 0.8s ease-out;
+        padding: 20px 50px;
+        font-size: 2rem;
+    }
+
+    @keyframes odulPop {
+        0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+        60% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+        100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    /* --- MOBİL UYUM (RESPONSIVE) --- */
+    @media (max-width: 768px) {
+        body, html { overflow: auto; height: auto; min-height: 100%; } 
+        .ekran { justify-content: flex-start; padding-top: 30px; height: auto; min-height: 100%; }
+        .overlay { justify-content: flex-start; padding-top: 30px; min-height: 100%; height: auto; }
+        
+        .ana-baslik { font-size: 3rem; margin-top: 40px; }
+        .alt-baslik { font-size: 1.3rem; }
+        .isim-etiketi { top: 50px; font-size: 0.9rem; }
+        .ust-bilgi { font-size: 1.2rem; top: 15px; }
+        
+        .oyun-icerik { flex-direction: column; overflow-y: visible; justify-content: flex-start; }
+        .oyun-sol { flex: none; width: 100%; margin-bottom: 20px; }
+        .oyun-sag { flex: none; width: 100%; border-left: none; padding-left: 0; border-top: 2px solid rgba(252, 163, 17, 0.3); padding-top: 15px; }
+        
+        .siklar-alani { grid-template-columns: 1fr; width: 100%; gap: 10px; }
+        .soru-kutusu { width: 100%; font-size: 1.2rem; padding: 15px; margin-bottom: 15px; }
+        
+        .sure-container { width: 100%; margin-top: 35px; }
+        .bilgi-paneli { font-size: 1.2rem; top: 10px; left: 10px; }
+        
+        .joker-kapsayici { margin-bottom: 15px; padding: 10px; }
+        .joker-btn { width: 50px; height: 50px; font-size: 0.8rem; }
+        
+        .puan-agaci { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 5px; }
+        .puan-agaci li { font-size: 1.1rem; padding: 5px 8px; border-radius: 4px; }
+        
+        #baraj-mesaj { font-size: 2.2rem; top: 30%; }
+        #odul-mesaj { font-size: 1.5rem; top: 50%; }
+        #devam-buton { font-size: 1.2rem; padding: 15px 20px; bottom: 5%; }
+        #feedback-mesaj { font-size: 3rem; }
+        
+        .input-kutusu { width: 90%; font-size: 1.2rem; }
+        .skor-tablosu { width: 100%; }
+        .buton { font-size: 18px; padding: 12px 30px; }
+        
+        #seyirci-modal { width: 200px; height: 200px; }
+        .sayac-cember { width: 100px; height: 100px; }
+        .sayac-ic { width: 80px; height: 80px; font-size: 2.5rem; }
+    }
+
+</style>
+</head>
+<body>
+
+    <div id="giris-container" class="ekran">
+        <div class="ust-bilgi">Gazi Üniversitesi Odyoloji Topluluğu</div>
+        <div class="isim-etiketi">Hazırlayan: Ahmet Talha Taşkara</div>
+        <h1 class="ana-baslik">KİM ODYOLOG<br>OLMAK İSTER?</h1>
+        <p class="alt-baslik">Zirveye Ulaşmaya Hazır Mısın?</p>
+        <button class="buton" onclick="isimEkraninaGec()">BAŞLA</button>
+    </div>
+
+    <div id="isim-container" class="ekran">
+        <div class="overlay">
+            <h2 class="ana-baslik" style="font-size: 3rem; transform: none;">KİM YARIŞIYOR?</h2>
+            <br>
+            <input type="text" id="oyuncu-ismi" class="input-kutusu" placeholder="İsmini Yaz..." maxlength="15">
+            
+            <div class="sinif-baslik">Eğitim Seviyenizi Seçin:</div>
+            <div class="sinif-butonlar">
+                <button class="sinif-btn" onclick="sinifSec(1)">1. Sınıf</button>
+                <button class="sinif-btn" onclick="sinifSec(2)">2. Sınıf</button>
+                <button class="sinif-btn" onclick="sinifSec(3)">3. Sınıf</button>
+                <button class="sinif-btn" onclick="sinifSec(4)">4. Sınıf</button>
+            </div>
+
+            <button class="buton" onclick="oyunuBaslat()" style="margin-top: 10px;">YARIŞMAYA BAŞLA</button>
+        </div>
+    </div>
+
+    <div id="oyun-container" class="ekran">
+        <div class="overlay">
+            <div id="karartma-perdesi"></div>
+            <div id="feedback-mesaj"></div>
+            
+            <!-- YENİ MESAJ BÖLÜMLERİ VE BUTON -->
+            <div id="baraj-mesaj" class="animasyon-yazi"></div>
+            <div id="odul-mesaj" class="animasyon-yazi"></div>
+            <button id="devam-buton" class="buton" onclick="sonrakiSoruyaGec()">SIRADAKİ SORUYA GEÇ</button>
+
+            <div id="seyirci-modal">
+                <div class="sayac-baslik">SEYİRCİ SÜRESİ</div>
+                <div class="sayac-cember" id="sayac-cember">
+                    <div class="sayac-ic" id="seyirci-sayac-rakam">30</div>
+                </div>
+            </div>
+
+            <div class="oyun-icerik">
+                <!-- SOL TARAF (SORU VE ŞIKLAR) -->
+                <div class="oyun-sol">
+                    <div class="bilgi-paneli">
+                        Soru: <span id="soru-sayac">1</span> / 10
+                    </div>
+
+                    <div class="sure-container" id="sure-kapsayici">
+                        <div class="sure-bar" id="sure-bar"></div>
+                    </div>
+
+                    <div class="soru-kutusu" id="soru-metni">
+                        Soru yükleniyor...
+                    </div>
+
+                    <div class="siklar-alani" id="siklar-kutusu">
+                        <button class="sik-buton" onclick="cevapKontrol(0, this)"><span class="sik-harf">A:</span> <span id="sik-a">...</span></button>
+                        <button class="sik-buton" onclick="cevapKontrol(1, this)"><span class="sik-harf">B:</span> <span id="sik-b">...</span></button>
+                        <button class="sik-buton" onclick="cevapKontrol(2, this)"><span class="sik-harf">C:</span> <span id="sik-c">...</span></button>
+                        <button class="sik-buton" onclick="cevapKontrol(3, this)"><span class="sik-harf">D:</span> <span id="sik-d">...</span></button>
+                    </div>
+                </div>
+
+                <!-- SAĞ TARAF (PUAN AĞACI) -->
+                <div class="oyun-sag">
+                    <div class="joker-kapsayici">
+                        <div class="joker-baslik">JOKERLER</div>
+                        <div class="joker-butonlar">
+                            <button class="joker-btn" id="joker-elli" onclick="kullanElli()">50:50</button>
+                            <button class="joker-btn" id="joker-seyirci" onclick="kullanSeyirci()">Seyirci</button>
+                            <button class="joker-btn kilitli" id="joker-cift" onclick="kullanCiftCevap()" disabled>x2<br>🔒</button>
+                            <button class="joker-btn" id="joker-degistir" onclick="kullanDegistir()">Değiştir</button>
+                        </div>
+                    </div>
+                    <ul class="puan-agaci" id="puan-agaci">
+                        <!-- JS ile doldurulacak -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sonuc-container" class="ekran">
+        <div class="overlay">
+            <h1 class="ana-baslik" id="sonuc-baslik" style="transform: none;">TEBRİKLER!</h1>
+            <p class="alt-baslik" id="sonuc-puan">Puanın: 0</p>
+            
+            <div class="skor-tablosu">
+                <div class="skor-baslik">🏆 EN İYİLER 🏆</div>
+                <div id="skor-listesi"></div>
+            </div>
+
+            <button class="buton" onclick="location.reload()">BAŞLANGICA DÖN</button>
+        </div>
+    </div>
+
+    <script>
+        // --- SES DOSYALARI ---
+        const dogruSes = new Audio('dogru.mp3.mp3');
+        const yanlisSes = new Audio('yanlis.mp3.mp3');
+        const gerilimSes = new Audio('gerilim.mp3.mp3'); 
+        gerilimSes.loop = true;
+
+        const puanlar = [10, 20, 30, 40, 50, 100, 200, 300, 500, 1000];
+
+        // --- SINIFLARA GÖRE KATEGORİZE EDİLMİŞ SORU HAVUZU ---
+        // Oyun "kümülatif" çalışır. Yani 2. sınıfı seçen birine 1. sınıf havuzu DA dahil edilir. 4. sınıfa tüm havuzlar dahil edilir.
+        // Her sınıfın içinde 1'den 10'a kadar zorluk seviyeleri vardır.
+        const tumSoruHavuzlari = {
+            1: { // --- 1. SINIF SORULARI ---
+                1: [
+                    { soru: "İşitme ve denge ile görevli olan 8. kranial sinirin (Nervus Vestibulocochlearis) beyin sapına girdiği bölge aşağıdakilerden hangisidir?", siklar: ["Serebellopontin köşe", "Foramen magnum", "İnferior kollikulus", "Medulla oblangata"], dogru: 0 },
+                    { soru: "Dış kulak yolu (Meatus acusticus externus) yetişkin bir insanda yaklaşık olarak kaç santimetre uzunluğundadır?", siklar: ["1.0 - 1.5 cm", "2.5 - 3.0 cm", "4.0 - 4.5 cm", "0.5 - 1.0 cm"], dogru: 1 },
+                    { soru: "Aşağıdakilerden hangisi orta kulakta bulunan kaslardan biridir ve yüksek şiddetli seslere karşı kulağı koruyan 'akustik refleks' mekanizmasında temel rol oynar?", siklar: ["Musculus temporalis", "Musculus masseter", "Musculus stapedius", "Musculus sternocleidomastoideus"], dogru: 2 },
+                    { soru: "Musculus stapedius kası hangi kranial sinir tarafından uyarılır (innerve edilir)?", siklar: ["Nervus Trigeminus (V. Sinir)", "Nervus Facialis (VII. Sinir)", "Nervus Vagus (X. Sinir)", "Nervus Vestibulocochlearis (VIII. Sinir)"], dogru: 1 },
+                    { soru: "İnsan kulağının doğal rezonans frekansı (dış kulak yolunun şekli ve uzunluğundan dolayı en iyi güçlendirdiği frekans) yaklaşık olarak hangi aralıktadır?", siklar: ["500 - 1000 Hz", "2500 - 3000 Hz", "6000 - 8000 Hz", "100 - 250 Hz"], dogru: 1 },
+                    { soru: "Odyolojide işitme kaybının türlerini belirlemek için hava yolu ve kemik yolu ölçümleri yapılır. Kemik yolu ölçümü hangi yapının işitme kapasitesini doğrudan test eder?", siklar: ["Dış kulak yolu", "Orta kulak kemikçikleri", "Sensörinöral sistem (Koklea ve işitme siniri)", "Kulak zarı"], dogru: 2 },
+                    { soru: "Bir ses dalgasının bir tam döngüsünü (siklusunu) tamamlaması için geçen süreye fizikte ne ad verilir?", siklar: ["Frekans", "Periyot", "Dalga boyu", "Genlik"], dogru: 1 },
+                    { soru: "Aşağıdakilerden hangisi dış kulak kepçesinin (aurikula) anatomik kısımlarından biri DEĞİLDİR?", siklar: ["Tragus", "Heliks", "Lobül", "Umbo"], dogru: 3 },
+                    { soru: "Kokleadaki tüy hücrelerinin (hair cells) üzerinde yer alan ve ses titreşimleriyle bükülerek hücrenin elektriksel olarak uyarılmasını sağlayan mikroskobik tüycüklere ne ad verilir?", siklar: ["Stereosilya", "Mikrovillüs", "Akson", "Kinosilyum"], dogru: 0 },
+                    { soru: "Sıfır Desibel (0 dB HL), odyolojide ne anlama gelir?", siklar: ["Ortamda hiçbir ses olmaması durumu", "Sağlıklı gençlerin duyabildiği en düşük ortalama ses şiddeti", "Sesin hızının sıfıra düşmesi", "İnsanın sese karşı hissettiği acı eşiği"], dogru: 1 }
+                ],
+                2: [
+                    { soru: "Fizikte ses şiddeti formülü gereği, sesin genliği (basıncı) 2 katına çıkarsa, desibel cinsinden Ses Basınç Seviyesindeki (SPL) artış ne kadar olur?", siklar: ["2 dB artar", "6 dB artar", "10 dB artar", "100 dB artar"], dogru: 1 },
+                    { soru: "Kulak zarına (timpanik membran) dışarıdan bakıldığında, zarın orta kulak boşluğuna doğru en çok çökük olduğu merkeze ne ad verilir?", siklar: ["Pars tensa", "Pars flaccida", "Umbo", "Annulus"], dogru: 2 },
+                    { soru: "Orta kulaktaki kemikçik zinciri, havadaki ses dalgalarının iç kulaktaki sıvı ortama geçerken yaşayacağı empedans uyumsuzluğunu (enerji kaybını) önlemek için sesi ortalama kaç desibel güçlendirir?", siklar: ["Yaklaşık 10 dB", "Yaklaşık 30 dB", "Yaklaşık 60 dB", "Güçlendirmez"], dogru: 1 },
+                    { soru: "Aşağıdaki frekanslardan hangisi standart saf ses odyometrisinde (işitme testinde) test edilen oktav frekanslarından biri DEĞİLDİR?", siklar: ["250 Hz", "1000 Hz", "4000 Hz", "10000 Hz"], dogru: 3 },
+                    { soru: "Georg von Békésy'nin Nobel ödüllü 'İlerleyen Dalga Teorisi'ne göre, koklea içindeki baziler membranın TİZ (yüksek frekanslı) seslere en iyi tepki veren bölgesi neresidir?", siklar: ["Kokleanın apeksi", "Kokleanın bazali (oval pencereye yakın kısım)", "Baziler membranın tam ortası", "Helikotrema"], dogru: 1 },
+                    { soru: "Yaşlanmaya bağlı olarak doğal olarak gelişen ve genellikle sensörinöral tipte, tiz frekansları daha çok etkileyen işitme kaybı durumuna ne ad verilir?", siklar: ["Otoskleroz", "Presbiakuzi", "Meniere hastalığı", "Akustik nörinom"], dogru: 1 },
+                    { soru: "Odyogram kâğıdında sol kulak hava yolu işitme eşikleri uluslararası standartlara göre hangi renk ve sembolle işaretlenir?", siklar: ["Kırmızı renkli Yuvarlak (O)", "Mavi renkli Çarpı (X)", "Kırmızı renkli Üçgen", "Mavi renkli Kare"], dogru: 1 },
+                    { soru: "Sesin yayılma hızı fiziksel ortama bağlı olarak değişir. Buna göre ses en hızlı hangi ortamda yayılır?", siklar: ["Havada", "Tatlı suda", "Vakum ortamında", "Katı maddelerde (ör. çelik)"], dogru: 3 },
+                    { soru: "Corti organında yer alan Dış Tüy Hücrelerinin (Outer Hair Cells) asıl fizyolojik görevi aşağıdakilerden hangisidir?", siklar: ["İşitsel sinyalleri doğrudan beyne iletmek", "Koklear amplifikatör olarak çalışarak zayıf sesleri şiddetlendirmek", "Endolenf sıvısının potasyum dengesini sağlamak", "Sesi toplayıp orta kulağa iletmek"], dogru: 1 },
+                    { soru: "Sağ kulağında iletim tipi işitme kaybı (örneğin kulak kiri tıkanıklığı) olan bir hastada Weber testinin sonucu nasıl beklenir?", siklar: ["Ses sol kulağa lateralize olur.", "Ses sağ kulağa (hasta kulağa) lateralize olur.", "Ses her iki kulakta eşit duyulur.", "Ses hiç duyulmaz."], dogru: 1 }
+                ],
+                3: [
+                    { soru: "Sağlıklı bir kulakta, orta kulak sisteminin (zar ve kemikçikler) sağladığı toplam amplifikasyon (yükseltme) oranı yaklaşık olarak kaça kaçtır?", siklar: ["1:1", "10:1", "22:1", "50:1"], dogru: 2 },
+                    { soru: "Rinne testi, bir diyapazon yardımıyla hava yolu ve kemik yolu işitmesini karşılaştırır. Sensörinöral işitme kaybı olan bir hastada Rinne testi sonucu nasıldır?", siklar: ["Rinne Negatif (Kemik > Hava)", "Rinne Pozitif (Hava > Kemik)", "Eşit (Hava = Kemik)", "Ses hiç duyulmaz"], dogru: 1 },
+                    { soru: "Orta kulak kaslarından olan Musculus Tensor Tympani hangi kranial sinir tarafından uyarılır?", siklar: ["Nervus Facialis (VII)", "Nervus Trigeminus (V)", "Nervus Vagus (X)", "Nervus Vestibulocochlearis (VIII)"], dogru: 1 },
+                    { soru: "İç kulaktaki endolenf sıvısının elektriksel potansiyeli (Endokoklear potansiyel) yaklaşık olarak kaç milivolttur (mV)?", siklar: ["-40 mV", "0 mV", "+80 mV", "+120 mV"], dogru: 2 },
+                    { soru: "Havadaki sesin yayılma hızı ortalama bir sıcaklıkta (yaklaşık 20 derece) saniyede kaç metredir?", siklar: ["140 m/s", "343 m/s", "1480 m/s", "300.000 m/s"], dogru: 1 },
+                    { soru: "Ses dalgalarının bir saniyede kat ettiği fiziksel mesafeye (dalga boyu) ulaşmak için hangi formül kullanılır?", siklar: ["Hız x Frekans", "Frekans / Hız", "Hız / Frekans", "Genlik x Zaman"], dogru: 2 },
+                    { soru: "Ters Kare Kanunu'na (Inverse Square Law) göre, ses kaynağından olan uzaklık iki katına çıktığında sesin şiddeti (SPL) kaç desibel düşer?", siklar: ["3 dB", "6 dB", "10 dB", "12 dB"], dogru: 1 },
+                    { soru: "İç tüy hücreleri (Inner Hair Cells) koklea boyunca anatomik olarak nasıl bir dizilim gösterir?", siklar: ["Tek sıra halinde", "Üç sıra halinde", "Beş sıra halinde", "Dağınık halde"], dogru: 0 },
+                    { soru: "İç kulakta yer alan ve başın dönme (açısal ivmelenme) hareketlerini algılayan yapılar aşağıdakilerden hangisidir?", siklar: ["Utrikül", "Sakkül", "Yarım Daire Kanalları", "Kohlea"], dogru: 2 },
+                    { soru: "Yerçekimine ve doğrusal (lineer) ivmelenmeye (örneğin asansörde yükselmeye) duyarlı olan vestibüler organlar hangileridir?", siklar: ["Ampulla ve Kupula", "Utrikül ve Sakkül", "Korti organı ve Maküla", "Helikotrema ve Promontoryum"], dogru: 1 }
+                ],
+                4: [
+                    { soru: "Otolit (kalsiyum karbonat kristalleri) adı verilen yapılar iç kulaktaki hangi duyu epitelinin üzerinde bulunur?", siklar: ["Korti organı", "Maküla", "Krista ampullaris", "Striya vaskülaris"], dogru: 1 },
+                    { soru: "Saf Ses Ortalaması (PTA - Pure Tone Average) hesaplanırken klinikte genellikle hangi frekanslardaki işitme eşiklerinin aritmetik ortalaması alınır?", siklar: ["250, 500, 1000 Hz", "500, 1000, 2000 Hz", "1000, 2000, 4000 Hz", "2000, 4000, 8000 Hz"], dogru: 1 },
+                    { soru: "Klinik bir odyogramda, SAĞ kulak KEMİK yolu işitme eşikleri (maskesiz) hangi sembolle gösterilir?", siklar: ["< (Sola açık açı)", "> (Sağa açık açı)", "[ (Sola açık köşeli ayraç)", "] (Sağa açık köşeli ayraç)"], dogru: 0 },
+                    { soru: "Santral işitme yollarının talamus'ta bulunan ve işitsel bilgiyi kortekse iletmeden önceki son durağı olan yapı hangisidir?", siklar: ["İnferior Kollikulus", "Lateral Lemniskus", "Medial Genikulat Cisim", "Koklear Nükleus"], dogru: 2 },
+                    { soru: "Fizikte aynı frekans ve genliğe sahip iki ses dalgası, tamamen aynı fazda (0 derece faz farkı) üst üste binerse ne tür bir girişim (interference) oluşur?", siklar: ["Yıkıcı girişim (Sessizlik)", "Yapıcı girişim (Şiddet artışı)", "Durağan dalga (Standing wave)", "Kırınım (Diffraction)"], dogru: 1 },
+                    { soru: "Dış kulak yolu ile orta kulağı birbirinden ayıran anatomik yapı hangisidir?", siklar: ["Oval pencere", "Yuvarlak pencere", "Membrana tympani (Kulak zarı)", "Östaki borusu"], dogru: 2 },
+                    { soru: "Sesin bir ortamdan diğerine (örneğin havadan suya) geçerken karşılaştığı dirence ne ad verilir?", siklar: ["Akustik rezonans", "Akustik empedans", "Akustik kırınım", "Akustik yansıma"], dogru: 1 },
+                    { soru: "Kokleanın apeksinde (tepe noktasında) scala vestibuli ile scala tympani'nin birleştiği ve perilenfin geçiş yaptığı dar deliğe ne ad verilir?", siklar: ["Helikotrema", "Promontoryum", "Modiolus", "Kupula"], dogru: 0 },
+                    { soru: "Kokleanın merkezinde yer alan, işitme siniri liflerinin içinden geçtiği kemik eksene ne ad verilir?", siklar: ["Modiolus", "Habenula perforata", "Osseoz spiral lamina", "Helikotrema"], dogru: 0 },
+                    { soru: "Dünya Sağlık Örgütü (WHO) sınıflamasına göre, 41-55 dB HL arasındaki bir işitme eşiği hangi derece işitme kaybı olarak adlandırılır?", siklar: ["Hafif derece", "Orta derece", "İleri derece", "Çok ileri derece"], dogru: 1 }
+                ],
+                5: [
+                    { soru: "Hem hava yolunda hem de kemik yolunda işitme eşiklerinin normal sınırların dışında (yüksek) olduğu, ancak aralarında 15 dB'den fazla fark (Air-Bone Gap) bulunduğu işitme kaybı tipine ne ad verilir?", siklar: ["İletim tipi işitme kaybı", "Sensörinöral tip işitme kaybı", "Mikst (Karma) tip işitme kaybı", "Fonksiyonel işitme kaybı"], dogru: 2 },
+                    { soru: "İşitme cihazı kullanımında veya odyolojik testlerde kullanılan, sesi hava yoluyla değil doğrudan kafatası kemiklerini titreştirerek ileten alete (transdüsere) ne ad verilir?", siklar: ["Supra-aural kulaklık", "İnsert kulaklık", "Kemik vibratör (Bone oscillator)", "Hoparlör"], dogru: 2 },
+                    { soru: "Kulak zarına gelen bir ses dalgasının zarın tamamını eşzamanlı olarak titreştirmemesi durumuna fiziksel olarak ne ad verilir?", siklar: ["Tonotopi", "Modal titreşim (Complex vibration)", "Doğrusal olmayan distorsiyon", "Empedans uyumu"], dogru: 1 },
+                    { soru: "Odyolojide sıklıkla kullanılan bir terim olan 'Bilateral' kelimesinin tıbbi anlamı nedir?", siklar: ["Tek taraflı", "İki taraflı (Her iki kulakta)", "Sonradan oluşan", "Doğuştan gelen"], dogru: 1 },
+                    { soru: "Hangi anatomik yapı orta kulak boşluğunun (cavum tympani) tavanını oluşturur ve orta kulağı beyin zarından (dura mater) ayırır?", siklar: ["Tegmen tympani", "Promontoryum", "Juguler bulbus", "Mastoid antrum"], dogru: 0 },
+                    { soru: "İşitme korteksindeki (Heschl girusu) nöronların, kokleadaki baziler membrana benzer şekilde frekanslara göre dizilmesine (alçak frekanslar bir yerde, yüksek frekanslar başka yerde) ne ad verilir?", siklar: ["Somatotopi", "Retinotopi", "Tonotopik organizasyon", "Plastisite"], dogru: 2 },
+                    { soru: "Klinik işitme testlerinde, test edilen (kötü) kulağa verilen sesin, kafatası kemikleri üzerinden geçerek test edilmeyen (iyi) kulak tarafından duyulmasına ne ad verilir?", siklar: ["Gölge işitme (Çapraz işitme / Cross-hearing)", "Maskeleme", "Akustik refleks", "Binaural duyma"], dogru: 0 },
+                    { soru: "Supra-aural (kulak üstü) standart kulaklıklar kullanılarak yapılan hava yolu testlerinde, iki kulak arasındaki 'İnteraural Atenüasyon' (sesin karşıya geçerken kaybettiği enerji) değeri ortalama kaç desibel kabul edilir?", siklar: ["0 dB", "40 dB", "60 dB", "100 dB"], dogru: 1 },
+                    { soru: "Kemik vibratörü ile yapılan testlerde İnteraural Atenüasyon (IA) değeri pratikte kaç desibel (dB) olarak kabul edilir?", siklar: ["0 dB", "20 dB", "40 dB", "60 dB"], dogru: 0 },
+                    { soru: "Akustik nöroma gibi 8. kranial siniri etkileyen kitleler (Retrokoklear patolojiler), en sık hangi frekanslarda işitme kaybına ve konuşmayı anlama skorunda düşüşe neden olur?", siklar: ["Alçak frekanslar", "Orta frekanslar", "Yüksek (Tiz) frekanslar", "Tüm frekanslarda eşit"], dogru: 2 }
+                ],
+                6: [
+                    { soru: "Fourier analizi fizikte ne amaçla kullanılır?", siklar: ["Sesi yükseltmek için", "Sesin yönünü bulmak için", "Karmaşık bir sesi (complex wave) kendisini oluşturan saf seslere (sinüs dalgalarına) ayırmak için", "Sesin hızını ölçmek için"], dogru: 2 },
+                    { soru: "Orta kulaktaki stapes (üzengi) kasının spazmı (miyoklonusu) hastada hangi şikayete neden olabilir?", siklar: ["Baş dönmesi (Vertigo)", "Objektif tinnitus (Kulak çınlaması)", "Kulak akıntısı", "Kulak zarı delinmesi"], dogru: 1 },
+                    { soru: "Hangi anatomik yapı dış kulak yolunun kıkırdak ve kemik bölümlerinin birleşim yerinde bulunur ve dış kulak yolunun en dar kısmını oluşturur?", siklar: ["İstmus (Isthmus)", "Umbo", "Heliks", "Annulus"], dogru: 0 },
+                    { soru: "Odyolojide konuşma testlerinde (Speech Audiometry), hastanın konuşmayı algıladığı en düşük ses şiddetine (farkında olma eşiği) ne ad verilir?", siklar: ["SRT (Speech Reception Threshold)", "SDT/SAT (Speech Detection Threshold)", "WRS (Word Recognition Score)", "MCL (Most Comfortable Loudness)"], dogru: 1 },
+                    { soru: "SRT (Konuşmayı Alma Eşiği) testi yapılırken genellikle ne tür kelimeler kullanılır?", siklar: ["Tek heceli kelimeler", "Üç heceli anlamsız kelimeler", "Sponde (İki heceli ve her hecesi eşit vurgulu) kelimeler", "Sessiz harf kümeleri"], dogru: 2 },
+                    { soru: "Gürültüye Bağlı İşitme Kaybında (NIHL), odyogramda genellikle hangi frekansta karakteristik bir 'çentik' (düşüş) görülür?", siklar: ["1000 Hz", "2000 Hz", "4000 Hz (veya 3000-6000 Hz arası)", "8000 Hz"], dogru: 2 },
+                    { soru: "Endolenf sıvısının aşırı üretimi veya emilimindeki bozukluk sonucu iç kulakta basınç artışına (Hidrops) neden olan hastalığın klinik adı nedir?", siklar: ["Meniere Hastalığı", "Otoskleroz", "Akut Otitis Media", "Kolesteatom"], dogru: 0 },
+                    { soru: "Dış ve orta kulaktaki yapıların tamamen normal oluştuğu, ancak iç kulakta (koklea) anatomik bir gelişim geriliği veya yokluğu durumuna genel olarak ne ad verilir?", siklar: ["Mondini displazisi veya Koklear aplazi", "Mikrotia", "Atrezi", "Timpanoskleroz"], dogru: 0 },
+                    { soru: "Ses dalgalarının bir engele çarptıktan sonra yön değiştirerek engelin etrafından dolaşmasına (özellikle düşük frekanslı seslerde belirgindir) fizikte ne denir?", siklar: ["Yansıma (Reflection)", "Kırılma (Refraction)", "Kırınım (Diffraction)", "Soğurma (Absorption)"], dogru: 2 },
+                    { soru: "Odyolojide işitme sınırını belirleyen eğrilerden, insan kulağının en hassas olduğu ve en düşük ses basıncıyla duyabildiği frekans aralığı hangisidir?", siklar: ["100 - 500 Hz", "1000 - 4000 Hz", "5000 - 8000 Hz", "10000 - 20000 Hz"], dogru: 1 }
+                ],
+                7: [
+                    { soru: "Kulak zarı (Timpanik membran) anatomik olarak kaç tabakadan oluşur?", siklar: ["Tek tabaka", "İki tabaka", "Üç tabaka", "Beş tabaka"], dogru: 2 },
+                    { soru: "Kulak zarının üst kısmında yer alan ve orta (fibröz) tabakası bulunmadığı için daha gevşek olan bölgeye ne ad verilir?", siklar: ["Pars Tensa", "Pars Flaccida (Shrapnell zarı)", "Umbo", "Annulus"], dogru: 1 },
+                    { soru: "Odyometride kullanılan 'Oktav' terimi neyi ifade eder?", siklar: ["Sesin şiddetinin iki katına çıkmasını", "Bir frekansın kendisinin iki katı olan frekansa olan aralığını", "Testin süresini", "Kulaklığın empedansını"], dogru: 1 },
+                    { soru: "Aşağıdakilerden hangisi dış kulak yolunun bezleri tarafından salgılanan ve halk arasında 'kulak kiri' olarak bilinen maddenin tıbbi adıdır?", siklar: ["Serümen", "Endolenf", "Perilenf", "Mukus"], dogru: 0 },
+                    { soru: "Orta kulaktaki stapes (üzengi) kemikçiğini tutan ve sabitleyen tendon (kiriş) hangi kasın uzantısıdır?", siklar: ["Tensor tympani", "Stapedius", "Masseter", "Digastrik kas"], dogru: 1 },
+                    { soru: "Kokleanın dış duvarında yer alan ve endolenf sıvısını üreterek kokleanın 'pili' gibi çalışan damardan zengin yapı hangisidir?", siklar: ["Reissner membranı", "Striya Vaskülaris", "Tektoryal membran", "Spiral ligaman"], dogru: 1 },
+                    { soru: "Tüy hücrelerinin üzerindeki stereosilyaların uçlarını örten ve titreşim anında sürtünme ile stereosilyaları büken jelatinöz zar hangisidir?", siklar: ["Tektoryal Membran", "Baziler Membran", "Timpanik Membran", "Retiküler Lamina"], dogru: 0 },
+                    { soru: "Sesin gürlüğünü (Loudness) ölçmek için kullanılan psikofiziksel birim aşağıdakilerden hangisidir?", siklar: ["Hertz (Hz)", "Desibel (dB)", "Sone veya Phon", "Paskal (Pa)"], dogru: 2 },
+                    { soru: "Perdenin (Pitch) psikofiziksel ölçü birimi nedir?", siklar: ["Mel", "Desibel", "Watt", "Joule"], dogru: 0 },
+                    { soru: "Orta kulak boşluğu ile mastoid hava hücreleri (kemik içindeki boşluklar) arasındaki geçişi sağlayan kanalın adı nedir?", siklar: ["Aditus ad antrum", "Östaki borusu", "İç kulak yolu (Meatus acusticus internus)", "Koklear su kemeri"], dogru: 0 }
+                ],
+                8: [
+                    { soru: "Çocuklarda Östaki borusunun anatomik konumu yetişkinlere kıyasla nasıldır ve bu durum neye yol açar?", siklar: ["Daha diktir, daha iyi havalanır.", "Daha yatay, daha kısa ve daha geniştir, orta kulak enfeksiyonlarına zemin hazırlar.", "Tümüyle kapalıdır.", "Daha uzundur."], dogru: 1 },
+                    { soru: "Hangi anatomik yapı işitme siniri (8. sinir) ve fasyal sinirin (7. sinir) beyin sapından iç kulağa doğru ilerlerken içinden geçtiği kemik kanaldır?", siklar: ["Dış kulak yolu", "İç kulak yolu (Meatus acusticus internus)", "Foramen ovale", "Fallop kanalı"], dogru: 1 },
+                    { soru: "Sıvıların sıkıştırılamaz olması prensibinden dolayı, stapes oval pencereyi içe ittiğinde iç kulaktaki sıvının hareket edebilmesi için dışa doğru esneyen yapı hangisidir?", siklar: ["Yuvarlak pencere", "Tegmen tympani", "Helikotrema", "Kulak zarı"], dogru: 0 },
+                    { soru: "Sensörinöral işitme kayıplı bir hastada ses şiddetindeki çok küçük artışların, hasta tarafından anormal derecede fazla/rahatsız edici algılanması durumuna ne ad verilir?", siklar: ["Adaptasyon", "Rekruitment (İşe alım fenomeni)", "Yorgunluk", "Maskeleme"], dogru: 1 },
+                    { soru: "Hastanın işitme eşiklerini daha iyi göstermek amacıyla kasten yanlış/abartılı cevaplar vermesi (Rol yapma) durumuna klinik odyolojide ne ad verilir?", siklar: ["Presbiakuzi", "Fonksiyonel (Non-organik / Pseudohipoakuzi) İşitme Kaybı", "Merkezi sağırlık", "Ototoksisite"], dogru: 1 },
+                    { soru: "Belli bazı antibiyotiklerin (örn. Gentamisin) veya kemoterapi ilaçlarının iç kulaktaki tüy hücrelerine zarar vererek işitme kaybına yol açmasına ne isim verilir?", siklar: ["Ototoksisite", "Otoskleroz", "Barotravma", "Akustik travma"], dogru: 0 },
+                    { soru: "Dış ortam basıncındaki ani değişikliklerin (örneğin tüplü dalış veya uçak inişi) orta kulak basıncını dengeleyememesi sonucu kulak zarı ve orta kulakta oluşan fiziksel hasara ne ad verilir?", siklar: ["Akustik travma", "Barotravma", "Presbiakuzi", "Kolesteatom"], dogru: 1 },
+                    { soru: "Odyogramda sol kulak MASKELİ hava yolu eşikleri hangi renk ve sembolle gösterilir?", siklar: ["Mavi Kare", "Kırmızı Üçgen", "Mavi X", "Kırmızı O"], dogru: 0 },
+                    { soru: "Bir desibel hesaplamasında güç oranı 10 katına çıkarsa, bu desibel (dB) ölçeğinde kaç birimlik bir artışa denk gelir?", siklar: ["3 dB", "10 dB", "20 dB", "100 dB"], dogru: 1 },
+                    { soru: "Aşağıdakilerden hangisi odyologların temel çalışma ve ilgi alanlarından biri DEĞİLDİR?", siklar: ["İşitme cihazı uygulaması yapmak", "Yenidoğan işitme taramalarını yönetmek", "Kulak zarı ameliyatı (Timpanoplasti) yapmak", "Vestibüler (Denge) testlerini yorumlamak"], dogru: 2 }
+                ],
+                9: [
+                    { soru: "Kokleanın bazal membranında bir ilerleyen dalga (traveling wave) oluşurken, dalganın maksimum genliğe ulaştığı noktadan sonra sönümlenmesi (azalması) nasıl bir seyir izler?", siklar: ["Çok yavaş sönümlenir", "Aniden ve asimetrik olarak sönümlenir", "Hiç sönümlenmez", "Geldiği yöne geri döner"], dogru: 1 },
+                    { soru: "İşitme fizyolojisinde 'Efferent' sinir yollarının görevi nedir?", siklar: ["Sesi beyinden kokleaya (aşağı doğru) taşıyarak inhibitör (baskılayıcı/düzenleyici) kontrol sağlamak", "Sesi kokleadan beyne (yukarı doğru) taşımak", "Orta kulak kaslarını gevşetmek", "Dengeyi sağlamak"], dogru: 0 },
+                    { soru: "Weber testinde ses hastanın SOL kulağına lateralize oluyorsa (yöneliyorsa), bu durum aşağıdakilerden hangisini GÖSTEREMEZ?", siklar: ["Sol kulakta iletim tipi işitme kaybı vardır", "Sağ kulakta sensörinöral tip işitme kaybı vardır", "Sağ kulakta iletim tipi işitme kaybı vardır", "İşitmesi simetrik değildir"], dogru: 2 },
+                    { soru: "Klinikte kullanılan standart bir diyapazon (tuning fork) genellikle hangi frekanstadır?", siklar: ["128 Hz", "512 Hz", "4000 Hz", "8000 Hz"], dogru: 1 },
+                    { soru: "Dış kulağın şekli ve konumu sayesinde, sesin önden mi arkadan mı yoksa yukarıdan mı geldiğini ayırt edebilmemizi sağlayan akustik filtreleme etkisine ne ad verilir?", siklar: ["Akustik refleks", "Baş gölgesi etkisi (Head shadow effect)", "Kulak kepçesi (Pinna) etkisi / HRTF", "Oklüzyon etkisi"], dogru: 2 },
+                    { soru: "Orta kulaktaki stapesin (üzenginin) tabanı (footplate) iç kulağa hangi pencereden bağlanır?", siklar: ["Yuvarlak pencere (Fenestra rotunda)", "Oval pencere (Fenestra vestibuli)", "Kohlear pencere", "Apikal pencere"], dogru: 1 },
+                    { soru: "Akustikte bir ses kaynağı hareket ederken, yaklaşırken frekansın ince (tiz), uzaklaşırken kalın (bas) duyulması olayına ne isim verilir?", siklar: ["Doppler Etkisi", "Rezonans", "Yankı", "Maskeleme"], dogru: 0 },
+                    { soru: "Saf ses odyometrisinde hastanın cevabını kontrol etmek ve testin güvenilirliğini artırmak için sesi her verdiğimizde uyguladığımız sunum süresi ortalama ne kadar olmalıdır?", siklar: ["0.1 saniye", "1 - 2 saniye", "5 - 6 saniye", "10 saniye"], dogru: 1 },
+                    { soru: "Sesin fiziksel özelliklerinden olan 'Faz' genellikle hangi birimle ifade edilir?", siklar: ["Hertz", "Desibel", "Derece (°)", "Paskal"], dogru: 2 },
+                    { soru: "Kendi sesimizi hem dışarıdan hava yoluyla hem de içeriden kafatası titreşimleriyle (kemik yoluyla) duyarız. Sesimizi bir kayıttan dinlediğimizde bize farklı/ince gelmesinin asıl sebebi nedir?", siklar: ["Mikrofonların sesi bozması", "Kayıttan dinlerken kemik yolu iletiminin devre dışı kalması", "Havanın ses hızını yavaşlatması", "Psikolojik yanılsama"], dogru: 1 }
+                ],
+                10: [
+                    { soru: "Dış tüy hücreleri (OHC) kokleada toplam olarak yaklaşık kaç adettir?", siklar: ["3.500", "12.000", "30.000", "50.000"], dogru: 1 },
+                    { soru: "Perilenf sıvısının iyonik bileşimi vücuttaki hangi diğer sıvıya çok benzerdir?", siklar: ["Kan plazması", "Hücre içi sıvısı", "Beyin Omurilik Sıvısı (BOS)", "Tükürük"], dogru: 2 },
+                    { soru: "Bir sesin havadaki dalga boyu, frekans arttıkça nasıl değişir?", siklar: ["Artar (Uzar)", "Değişmez", "Azalır (Kısalır)", "Önce artar sonra azalır"], dogru: 2 },
+                    { soru: "Timpanik membranın (kulak zarı) ışık refleksinin (cone of light) sağ kulakta görüldüğü pozisyon bir saat kadranına benzetilirse, saat kaç hizasındadır?", siklar: ["Saat 5", "Saat 7", "Saat 12", "Saat 3"], dogru: 0 },
+                    { soru: "Kafatasının tam arkasındaki mastoid kemik çıkıntısına konulan bir diyapazon ile yapılan ve hastanın kemik yolu eşiği ile muayene edenin kemik yolu eşiğini karşılaştıran tarihi testin adı nedir?", siklar: ["Rinne Testi", "Weber Testi", "Schwabach Testi", "Bing Testi"], dogru: 2 },
+                    { soru: "Bing testi neyi saptamak için kullanılır?", siklar: ["Oklüzyon (kapanma) etkisinin olup olmadığını", "İç kulaktaki sıvı basıncını", "Akustik refleksi", "Konuşmayı ayırt etmeyi"], dogru: 0 },
+                    { soru: "Aşağıdakilerden hangisi iç kulağa (kokleaya) kan sağlayan ana arterdir?", siklar: ["Karotis arteri", "Labirentin arter", "Juguler ven", "Fasyal arter"], dogru: 1 },
+                    { soru: "İşitme cihazlarında 'Gain' (Kazanç) terimi ne anlama gelir?", siklar: ["Cihazın pil ömrü", "Cihazın mikrofona giren sesi kaç desibel yükselttiği", "Kulak kalıbının büyüklüğü", "Cihazın fiyatı"], dogru: 1 },
+                    { soru: "Mikrotia tanısı almış bir çocukta dışarıdan bakıldığında ne tür bir anatomik bozukluk görülür?", siklar: ["Gözlerin farklı renk olması", "Kulak kepçesinin (Pinna) anormal derecede küçük veya gelişmemiş olması", "Boyunda şişlik", "Ağız yarığı"], dogru: 1 },
+                    { soru: "Modern odyolojinin temelleri atılırken, alanın 'Odyoloji' adını almasına öncülük eden ve klinik olarak gelişmesini sağlayan asıl tarihi olay aşağıdakilerden hangisidir?", siklar: ["Birinci Dünya Savaşı öncesi odyometrenin icadı", "İkinci Dünya Savaşı sonrası askerlerin işitme kayıplarının rehabilitasyon ihtiyacı", "1990'larda koklear implantın yaygınlaşması", "Röntgen cihazının icadı"], dogru: 1 }
+                ]
+            },
+            2: { // --- 2. SINIF SORULARI ---
+                1: [
+                    { soru: "Kulak kanalına uygun boyutta farklı renkler farklı boyutlarda olan nedir?", siklar: ["Plastik Parçası", "Tıkaç", "Prob", "Brop"], dogru: 2 },
+                    { soru: "Timpanometrik değerlendirme ve akustik refleks ölçümünde kullanılan cihaz nedir?", siklar: ["Timpanometre", "Desibel Ölçer", "Metre", "Odyogram"], dogru: 0 },
+                    { soru: "Sesin maksimum kompliansının sağlandığı basınç noktası nedir?", siklar: ["Seyir Noktası", "Mızrak Noktası", "Tepe Noktası", "Hiç biri :)"], dogru: 2 },
+                    { soru: "Hava yolu ve kemik yolu eşiklerini ölçmeyi içeren tam bir işitme değerlendirmesidir.", siklar: ["Timpanometri", "Odyometri", "ABR", "Akustik Frekans"], dogru: 1 },
+                    { soru: "İnsanların çeşitli sesleri nasıl algıladıklarının bilimsel çalışmasını içeren psikofizik dalı nedir?", siklar: ["Akustik", "Psikoakustik", "Fonoloji", "Odyometri"], dogru: 1 },
+                    { soru: "Sesin saniyedeki titreşim sayısını ifade eden terim nedir ve birimi nedir?", siklar: ["Amplitüd (Genlik) - Desibel (dB)", "Dalga boyu - Metre (m)", "Frekans - Hertz (Hz)", "Periyot - Saniye (s)"], dogru: 2 },
+                    { soru: "Sesin şiddet birimi olan Desibel (dB) için aşağıdakilerden hangisi doğrudur?", siklar: ["Doğrusal (lineer) bir ölçek kullanır.", "Logaritmik (doğrusal olmayan) bir ölçek kullanır.", "Sadece sesin frekansını ölçer.", "Maksimum değeri 100'dür."], dogru: 1 },
+                    { soru: "Tüm frekanslarda aynı akustik enerjiyi taşıyan, 'TV statiği' gibi ses çıkaran gürültü tipi nedir?", siklar: ["Pembe Gürültü (Pink Noise)", "Beyaz Gürültü (White Noise)", "Gaussian Gürültü", "Dar Bant Gürültü (Narrow Band Noise)"], dogru: 1 }
+                ],
+                2: [
+                    { soru: "Odyometre ile ölçülen standart frekanslar için duyulabilir eşiği gösteren grafiğin adı nedir?", siklar: ["Odyogram", "Prob", "Odyometri", "İşitme Grafiği"], dogru: 0 },
+                    { soru: "Tepe noktası vermeyen düz veya yaygın tepeli düşük amplitüdlü timpanogram hangisidir?", siklar: ["Tip C", "Tip As", "Tip B", "Tip A"], dogru: 2 },
+                    { soru: "-100 ile -200 arasında normal amplitüdle tepe veren timpanogram hangisidir?", siklar: ["Tip F", "Tip As", "Tip A", "Tip C"], dogru: 3 },
+                    { soru: "Oktav Nedir?", siklar: ["Ses Perdesi", "Ses Aralığı", "Yüksek Ses", "Basınç"], dogru: 1 },
+                    { soru: "Sesin 'incelik' veya 'kalınlık' derecesi olarak algılanan psikofiziksel karşılığı nedir?", siklar: ["Tını (Timbre)", "Perde (Pitch)", "Gürlük (Loudness)", "Rezonans"], dogru: 1 },
+                    { soru: "Kişinin sesi duymaya başladığı seviye (eşik) ile sesin rahatsız edecek kadar yüksek algıladığı seviye (rahatsız edici ses seviyesi) arasındaki aralığa ne ad verilir?", siklar: ["İşitme Seviyesi (Hearing Level)", "Algılama Seviyesi (Sensation Level)", "Dinamik Aralık (Dynamic Range)", "Ses Basınç Seviyesi (Sound Pressure Level)"], dogru: 2 },
+                    { soru: "Konuşmanın tonlama, vurgu ve ritim gibi özelliklerini ifade eden terim nedir?", siklar: ["Artikülasyon (Sesletim)", "Fonoloji", "Semantik", "Prozodi"], dogru: 3 },
+                    { soru: "Dilin bileşenlerinden hangisi kelimelerin ve cümlelerin anlamı ile ilgilenir?", siklar: ["Morfoloji (Biçim bilim)", "Sentaks (Söz dizim)", "Semantik (Anlam bilim)", "Pragmatik (Kullanım)"], dogru: 2 }
+                ],
+                3: [
+                    { soru: "Normal basınç alanında, normalden daha yüksek amplitüdle tepe veren timpanogram hangisidir?", siklar: ["Tip B", "Tip C", "Tip Ad", "Tip F"], dogru: 2 },
+                    { soru: "Normal basınç alanında, normal amplitudle tepe veren, normal kulakta elde edilen Timpanogram hangisidir?", siklar: ["Tip As", "Tip Ad", "Tip A", "Tip B"], dogru: 2 },
+                    { soru: "Kişinin en rahat algıladığı ses seviyesine ne denir?", siklar: ["Most Comfortable Level (MCL)", "Auditory Brainstem Response (ABR)", "Total Comfortable Level (TCL)", "Minimum Comfortable Level (MCL)"], dogru: 0 },
+                    { soru: "Yüksek şiddetli ses uyaranına karşı orta kulakta yanıt olarak ortaya çıkan istemsiz kas gerginliğinin adı nedir?", siklar: ["Kas tonusu", "Ani Refleks", "Kulak korkutan", "Akustik Refleks"], dogru: 3 },
+                    { soru: "İşitsel rehabilitasyonda kullanılan 'Dinleme Hiyerarşisi'nin ilk ve en temel basamağı nedir?", siklar: ["Detection (Fark Etme)", "Discrimination (Ayırt Etme)", "Identification (Tanıma)", "Comprehension (Anlamlandırma)"], dogru: 0 },
+                    { soru: "İşitme kayıplı çocukların dinleme ve işitme teknolojileri (cihaz, implant) yoluyla konuşma dilini geliştirmesini hedefleyen terapi yaklaşımı nedir?", siklar: ["İşaret Dili Eğitimi", "Artikülasyon Terapisi", "İşitsel-Sözel Terapi (AVT)", "İşitsel İşlemleme Terapisi"], dogru: 2 },
+                    { soru: "Kulak kepçesinin (Auricula) anatomik yapısı, sesin hangi özelliği için önemlidir?", siklar: ["Sesi daha pes (kalın) hale getirmek", "Sesin yönünün algılanması (Lokalizasyon)", "Sadece orta kulağı korumak", "Sesin şiddetini azaltmak"], dogru: 1 },
+                    { soru: "Dış kulak yolunu orta kulaktan ayıran, 'kulak zarı' olarak da bilinen yapı nedir?", siklar: ["Östaki Tüpü", "Timpanik Membran", "Koklea", "Stapes (Üzengi)"], dogru: 1 }
+                ],
+                4: [
+                    { soru: "Kulaklıklar aracılığıyla hava yolundan iletilen saf ses uyaranların duyulabildiği en düşük şiddet seviyesidir.", siklar: ["Otoakustik Emisyon", "Hava Yolu Eşikleri", "Konuşmayı Anlama Eşiği", "Duyma Seviyesi"], dogru: 1 },
+                    { soru: "Herhangi bir dalga şeklinin maksimum değeri; dalga Genliğinin adı nedir?", siklar: ["Maksimum Genlik", "Tepe Noktası", "Amplitüd", "Peripostgual"], dogru: 2 },
+                    { soru: "Binaural İşitme Nedir?", siklar: ["Baskınlık", "Her İki Kulaktan İşitme", "İşitsel Yoksunluk", "İki Kulaktan sorun"], dogru: 1 },
+                    { soru: "Dil edinim öncesi ortaya çıkan işitme kaybının adı nedir?", siklar: ["Prelingual", "Perilingual", "Postlingual", "Peripostgual"], dogru: 0 },
+                    { soru: "Orta kulakta yer alan ve sırasıyla (dışarıdan içeriye) titreşimi iç kulağa ileten kemikçikler hangileridir?", siklar: ["Helix, Tragus, Lobule", "Malleus (Çekiç), Incus (Örs), Stapes (Üzengi)", "Skala Vestibuli, Skala Media, Skala Timpani", "Utrikül, Sakkül, Kanallar"], dogru: 1 },
+                    { soru: "Orta kulak basıncını dış ortam basıncı ile dengelemeye yarayan yapı nedir?", siklar: ["Dış Kulak Yolu", "Koklea", "Timpanik Membran", "Östaki Tüpü"], dogru: 3 },
+                    { soru: "İç kulakta bulunan, işitmeden sorumlu ve salyangoz şeklinde olan yapı hangisidir?", siklar: ["Koklea", "Vestibül", "Semisirküler Kanallar", "Stapes (Üzengi)"], dogru: 0 },
+                    { soru: "Koklea (salyangoz) içindeki frekans organizasyonuna ne ad verilir?", siklar: ["Harmonik Organizasyon", "Tonotopik Organizasyon", "Kortikal Organizasyon", "Vestibüler Organizasyon"], dogru: 1 }
+                ],
+                5: [
+                    { soru: "Ses kaynağının yönünü iki kulağa gelen uyaranın farklılığından yararlanarak saptamaya ne denir?", siklar: ["Saptama", "Lokalizasyon", "Artikülasyon", "Laterizasyon"], dogru: 1 },
+                    { soru: "Normal basınç alanında, düşük amplitüdle tepe veren timpanogram hangisidir?", siklar: ["Tip A", "Tip B", "Tip C", "Tip As"], dogru: 3 },
+                    { soru: "Farklı gürültü koşullarında... rekabet eden seslerin varlığında tek bir sesi algılama yeteneğini ifade eden terim nedir?", siklar: ["Ortak Algı", "Kulak Birliği", "Kokteyl Partisi Etkisi", "Tekil İşitme"], dogru: 2 },
+                    { soru: "İç kulakta, doğrusal hareketleri (hızlanma/yavaşlama) ve yerçekimini algılayan denge organları hangileridir?", siklar: ["Semisirküler Kanallar", "Koklea ve Korti Organı", "Utrikül ve Sakkül", "Malleus ve Incus"], dogru: 2 },
+                    { soru: "Anatomik terminolojide 'Superior' ne anlama gelir?", siklar: ["Alt, aşağıda", "Ön, önde", "Üst, yukarıda", "Merkeze yakın"], dogru: 2 },
+                    { soru: "Anatomik terminolojide 'Medial' ve 'Lateral' ne anlama gelir?", siklar: ["Medial = Ön, Lateral = Arka", "Medial = Üst, Lateral = Alt", "Medial = Merkeze (iç) yakın, Lateral = Merkezden (dış) uzak", "Medial = Yüzeysel, Lateral = Derin"], dogru: 2 },
+                    { soru: "Vücudu tam ortadan 'sağ' ve 'sol' olarak iki eşit parçaya ayıran düzlem hangisidir?", siklar: ["Koronal (Frontal) Düzlem", "Transvers (Horizontal) Düzlem", "Sagital Düzlem", "Aksiyel Düzlem"], dogru: 2 },
+                    { soru: "Odyoloji terminolojisinde 'Kontralateral' ne anlama gelir?", siklar: ["Her iki taraflı (Çift)", "Aynı tarafta", "Karşı tarafta", "Tek taraflı"], dogru: 2 }
+                ],
+                6: [
+                    { soru: "Aşağıdakilerden hangisi saf ses odyometrisi testinde kullanılan frekanslardan değildir?", siklar: ["500 Hz", "2000 Hz", "4000 Hz", "7000 Hz"], dogru: 3 },
+                    { soru: "Transducer/Transdüser nedir, ne işe yarar?", siklar: ["Ses seviyesini yükseltir", "Ses seviyesini düşürür", "Bir enerjiyi başka bir enerjiye çevirir", "Bir çeşit hoparlördür"], dogru: 2 },
+                    { soru: "Tüm frekanslarda aynı akustik enerjiyi taşıyan geniş bantlı gürültünün adı nedir?", siklar: ["Beyaz Gürültü", "Pembe Gürültü", "Gri Gürültü", "Dar Bant Gürültü"], dogru: 0 },
+                    { soru: "Frekans dağılımı belli bir frekans bandında yoğun olarak yer alan... saf seslerin maskelenmesi için kullanılan gürültünün adı nedir?", siklar: ["Beyaz Gürültü", "Dar Bant Gürültü", "Konuşma Gürültüsü", "Pembe Gürültü"], dogru: 1 },
+                    { soru: "Bir sinir hücresinde (nöron) uyarıları alan, genellikle 'ağaç dalı' benzeri yapılara ne ad verilir?", siklar: ["Akson (Axon)", "Soma (Hücre Gövdesi)", "Myelin Kılıf", "Dendrit (Dendrite)"], dogru: 3 },
+                    { soru: "Beyinde 'konuşma üretiminden' sorumlu olan... (Brodmann 44-45) alan hangisidir?", siklar: ["Wernicke Alanı", "Broca Alanı", "Heschl Gyrus", "Corpus Callosum"], dogru: 1 },
+                    { soru: "Beyinde 'dilin anlaşılmasından'... (Brodmann 22) alan hangisidir?", siklar: ["Wernicke Alanı", "Broca Alanı", "Somatosensoriyel Korteks", "Oksipital Lob"], dogru: 0 },
+                    { soru: "Beynin sağ ve sol yarım küreleri arasındaki bilgi iletişimini sağlayan ana köprü yapı nedir?", siklar: ["Beyin Sapı (Brainstem)", "Talamus", "Corpus Callosum", "Hipokampüs"], dogru: 2 }
+                ],
+                7: [
+                    { soru: "Orta kulak basıncını ayarlayan sistemin ne kadar iyi çalıştığını, timpanik membranın sağlam olup olmadığını... gösteren grafiğin adı nedir?", siklar: ["Timpanogram", "Timpanometri", "Odyogram", "Akustik Refleks Testi"], dogru: 0 },
+                    { soru: "Ses sol kulaktan veriliyor, prob sol kulakta ise bu hangi reflekstir?", siklar: ["Sol kontralateral refleks", "Sağ ipsilateral refleks", "Sağ kontralateral refleks", "Sol ipsilateral refleks"], dogru: 3 },
+                    { soru: "Ses sol kulaktan veriliyor, prob sağ kulakta ise bu hangi reflekstir?", siklar: ["Sol kontralateral refleks", "Sağ ipsilateral refleks", "Sağ kontralateral refleks", "Sol ipsilateral refleks"], dogru: 0 },
+                    { soru: "Ses sağ kulaktan veriliyor, prob sağ kulakta ise bu hangi reflekstir?", siklar: ["Sol kontralateral refleks", "Sağ ipsilateral refleks", "Sağ kontralateral refleks", "Sol ipsilateral refleks"], dogru: 1 },
+                    { soru: "Primer İşitsel Korteks (Brodmann 41-42) beynin hangi lobunda yer alır?", siklar: ["Frontal Lob", "Parietal Lob", "Oksipital Lob", "Temporal Lob"], dogru: 3 },
+                    { soru: "Aşağıdakilerden hangisi implante edilebilir (cerrahi) bir amplifikasyon sistemi DEĞİLDİR?", siklar: ["Koklear İmplant (CI)", "İşitsel Beyinsapı İmplantı (ABI)", "Standart Kulak Arkası (BTE) İşitme Cihazı", "Kemiğe İmplante Edilebilir İşitme Cihazları (BAHA)"], dogru: 2 },
+                    { soru: "İşitme sinirinin fonksiyonel olmadığı durumlarda, sesi doğrudan beyin sapına iletmek için kullanılan implant tipi nedir?", siklar: ["Koklear İmplant (CI)", "İşitsel Beyinsapı İmplantı (ABI)", "Orta Kulak İmplantı", "Standart İşitme Cihazı"], dogru: 1 },
+                    { soru: "Koklear implantın 'konuşma işlemcisi', 'mikrofon' ve 'verici bobin'i içeren bölümü hangi parçadır?", siklar: ["İç Parça (İmplant)", "Dış Parça", "Elektrot Dizisi", "SUT (Sağlık Uygulama Tebliği)"], dogru: 1 }
+                ],
+                8: [
+                    { soru: "Ses sağ kulaktan veriliyor, prob sol kulakta ise bu hangi reflekstir?", siklar: ["Sol kontralateral refleks", "Sağ ipsilateral refleks", "Sağ kontralateral refleks", "Sol ipsilateral refleks"], dogru: 2 },
+                    { soru: "Sürekli verilen stimülasyona karşı stapes kasındaki kasılmanın gevşeme zamanını... ölçen testin adı nedir?", siklar: ["İnteraural Attenuasyon", "Otoakustik Emisyon", "Refleks Decay", "Weber Testi"], dogru: 2 },
+                    { soru: "İşitme eşiğinin biraz üzerinde verilen sürekli bir uyaranın, belirli zamanı tamamlamadan önce duyulamaz olmasıdır.", siklar: ["İşitsel Adaptasyon", "Tone Decay Test", "Maskeleme", "Weber Test"], dogru: 1 },
+                    { soru: "Uyarı başlangıcından cevabın oluşturduğu dalga defleksiyonuna kadar olan süreye .... denir?", siklar: ["Latans", "Amplitüd", "Periyot", "Frekans"], dogru: 0 },
+                    { soru: "Koklear implant 'fitting' (programlama) işleminde, hastanın 'duyabildiği en yumuşak elektrik akım seviyesini' belirten terim nedir?", siklar: ["T-Level (Threshold / Eşik)", "C-Level (Comfort / Konfor) veya M-Level", "Dinamik Aralık (Dynamic Range)", "İmpedans"], dogru: 0 },
+                    { soru: "SUT'a göre... bir çocuğun koklear implant bedelinin karşılanması için kaç yaşın altında olmaması gerekir?", siklar: ["6 ay", "12 ay (1 yaş)", "24 ay (2 yaş)", "48 ay (4 yaş)"], dogru: 1 },
+                    { soru: "SUT'a göre, 2 yaş üstü... koklear implant kriteri için işitme eşikleri ortalaması... bilateral kaç dB'den daha kötü olmalıdır?", siklar: ["40 dB", "60 dB", "80 dB", "120 dB"], dogru: 2 },
+                    { soru: "İç kulaktan kortekse kadar uzanan işitsel yolların... elektriksel yanıtları kaydeden testlerin genel adı nedir?", siklar: ["Otoakustik Emisyon (OAE)", "Timpanometri", "İşitsel Uyarılmış Potensiyeller (AEP)", "Saf Ses Odyometrisi"], dogru: 2 }
+                ],
+                9: [
+                    { soru: "Kulak kanalı kapalı olduğu durumda... kemik yolu eşiklerinin daha iyi gözükmesine neden olan nedir?", siklar: ["Akustik İmmitans", "Stenger Etkisi", "Weber Etkisi", "Oklüzyon Etkisi"], dogru: 3 },
+                    { soru: "Bir kulağa uyaran ve maskeleme sinyalleri aynı anda sunulduğunda... engellemesini sağlayan miktara ne denir?", siklar: ["Yetersiz Maskeleme", "Santral Maskeleme", "Etkili Maskeleme", "Aşırı Maskeleme"], dogru: 2 },
+                    { soru: "Psikoakustik ve sinyal işlemede, tek bir frekansa sahip sinüzoidal dalga biçimine sahip bir sinyale verilen ad nedir?", siklar: ["Saf Ses (Pure Tone)", "Kompleks Ses", "Gürültü", "Harmonik"], dogru: 0 },
+                    { soru: "Ses kaynağının pozisyonundan kaynaklı, kulaklar arası zaman ve şiddet farkı oluşmasıdır.", siklar: ["Reverberasyon", "Maskeleme", "Santral Maskeleme", "Başın Gölge Etkisi"], dogru: 3 },
+                    { soru: "Doğrudan kokleadan ve işitme sinirinin en periferik (ilk) kısmından... potansiyelleri kaydeden test hangisidir?", siklar: ["ABR (İşitsel Beyin Sapı Yanıtı)", "LLR (Geç Latans Yanıtları)", "Elektrokokleografi (ECochG)", "MMN (Mismatch Negativity)"], dogru: 2 },
+                    { soru: "Bebeklerde işitme eşiklerini belirlemek... en sık kullanılan, ilk 10-12 milisaniyeyi ölçen test nedir?", siklar: ["ABR (İşitsel Beyin Sapı Yanıtı)", "P300 (Geç Latans Yanıtı)", "Odyometri", "Timpanometri"], dogru: 0 },
+                    { soru: "ABR (İşitsel Beyin Sapı Yanıtı) testinde, 'Latans' (Gecikme) neyi ifade eder?", siklar: ["Dalganın ne kadar büyük (yüksek) olduğunu (Amplitüd).", "Dalganın ne kadar net göründüğünü (Morfoloji).", "Uyaranın verilmesinden dalganın ortaya çıkmasına kadar geçen süre (milisaniye).", "Testin toplam ne kadar sürdüğünü."], dogru: 2 },
+                    { soru: "Odyolojide 'Retrokoklear Patoloji' terimi neyi ifade eder?", siklar: ["Dış kulak yolunda tıkanıklık (örn. buşon).", "Orta kulakta sıvı birikmesi (efüzyonlu otit).", "İç kulaktaki (koklea) tüy hücrelerinde hasar.", "İşitme siniri (8. sinir) veya beyin sapındaki bir lezyon (örn. tümör)."], dogru: 3 }
+                ],
+                10: [
+                    { soru: "Temel frekansın pozitif tam sayı katı olan bir frekansa sahip bir dalgaya verilen ad nedir?", siklar: ["Harmonik", "Perde", "Rezonans", "Timbre"], dogru: 0 },
+                    { soru: "Aşağıdakilerden hangisi algı türlerinden biri değildir?", siklar: ["İşitsel Algı", "Uzay Algı", "Zaman Algısı", "Genel Algı"], dogru: 3 },
+                    { soru: "Müzik, ilişkili sesler ve sözel olmayan seslerin... sorumlu beyin yarım küresi hangisidir?", siklar: ["Sol Hemisfer", "Beyincik", "Sağ Hemisfer", "Frontal Lob"], dogru: 2 },
+                    { soru: "Aşağıdakilerden hangisi Superior Olivary Complex (SOC)'in işlevlerinden değildir?", siklar: ["Lateralizasyon", "Lokalizasyon", "Binaural İntegrasyon", "Frekans Ayrımı (Frequency Discrimination)"], dogru: 3 },
+                    { soru: "Sabitlenmiş stapedial plakan enerjiyi kokleaya etkili bir şekilde iletemediğinde ne olur?", siklar: ["Sinirsel Hasar", "Östaki Görevini Yerine Getiremez", "İletim Tipi İşitme Kaybı Gerçekleşir", "Kesin Sağırlık"], dogru: 2 },
+                    { soru: "Santral işitsel işlemleme bozukluğu (CAPD) olan bir bireyde, saf ses işitme eşikleri (odyogram) tipik olarak nasıldır?", siklar: ["Çok ileri derecede işitme kaybı gösterir.", "Genellikle Normal veya Normale Yakındır.", "Sadece yüksek frekanslarda kayıp gösterir.", "Sadece alçak frekanslarda kayıp gösterir."], dogru: 1 },
+                    { soru: "Aşağıdakilerden hangisi Santral İşitsel İşlemleme Bozukluğunun (CAPD) tipik belirtilerinden biridir?", siklar: ["Kulak çınlaması (Tinnitus)", "Baş dönmesi (Vertigo)", "Gürültülü ortamda konuşmayı anlamada ciddi zorluk", "Sesleri çok yüksek (hiperakuzi) duyma"], dogru: 2 },
+                    { soru: "Her iki kulağa aynı anda farklı uyaranların (örn. sol kulağa 'kedi', sağ kulağa 'köpek') verildiği testlere ne ad verilir?", siklar: ["Monaural Testler", "Binaural Testler", "Dikotik (Dichotic) Testler", "Timpanometrik Testler"], dogru: 2 }
+                ]
+            },
+            3: { // --- 3. SINIF SORULARI ---
+                1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: []
+            },
+            4: { // --- 4. SINIF SORULARI ---
+                1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: []
+            }
+        };
+
+        // Oyun boyunca çekilen ve kümülatif olarak oluşturulan havuz
+        let aktifHavuz = { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[], 10:[] };
+
+        let mevcutSoruIndex = 0;
+        let puan = 0;
+        let garantiPuan = 0;
+        let oyuncuIsmi = "";
+        let secilenSinifKademesi = 0; // Başlangıçta seçilmemiş
+        let aktifSoruData = null; // Ekranda gösterilen soru objesi
+        
+        let cevapVerildi = false; 
+        let secilenIndexGlobal = null;
+        let secilenButonGlobal = null;
+        
+        let sureInterval; 
+        let kalanSure = 30;
+
+        // Joker Değişkenleri
+        let jokerElliKullanildi = false;
+        let jokerSeyirciKullanildi = false;
+        let jokerDegistirKullanildi = false;
+        
+        let jokerCiftKullanildi = false;
+        let ciftCevapAktif = false;
+        let ciftCevapHataSayisi = 0;
+
+        // --- EKRAN GEÇİŞLERİ ---
+        function ekranDegistir(id) {
+            document.querySelectorAll('.ekran').forEach(div => div.style.display = 'none');
+            const yeniEkran = document.getElementById(id);
+            yeniEkran.style.display = 'flex';
+            
+            const overlay = yeniEkran.querySelector('.overlay');
+            if(overlay) {
+                overlay.style.animation = 'none';
+                void overlay.offsetWidth; 
+                overlay.style.animation = 'fadeIn 0.5s ease-out';
+            }
+        }
+
+        function isimEkraninaGec() {
+            ekranDegistir('isim-container');
+        }
+
+        // --- SINIF SEÇİM MANTIĞI ---
+        function sinifSec(sinifNo) {
+            secilenSinifKademesi = sinifNo;
+            document.querySelectorAll('.sinif-btn').forEach((btn, index) => {
+                if (index + 1 === sinifNo) {
+                    btn.classList.add('secildi');
+                } else {
+                    btn.classList.remove('secildi');
+                }
+            });
+        }
+
+        function oyunuBaslat() {
+            const isimInput = document.getElementById('oyuncu-ismi');
+            oyuncuIsmi = isimInput.value.trim();
+            if(oyuncuIsmi === "") { alert("Lütfen bir isim gir!"); return; }
+            if(secilenSinifKademesi === 0) { alert("Lütfen eğitim seviyenizi seçin!"); return; }
+            
+            // Sıfırlamalar
+            mevcutSoruIndex = 0;
+            puan = 0;
+            garantiPuan = 0;
+            
+            // --- KÜMÜLATİF HAVUZUN OLUŞTURULMASI ---
+            aktifHavuz = { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[], 10:[] };
+            
+            for (let sinif = 1; sinif <= secilenSinifKademesi; sinif++) {
+                for (let zorluk = 1; zorluk <= 10; zorluk++) {
+                    // Eğer bu sınıfın bu zorluğunda soru varsa, aktif havuza ekle (concat)
+                    if (tumSoruHavuzlari[sinif][zorluk] && tumSoruHavuzlari[sinif][zorluk].length > 0) {
+                        aktifHavuz[zorluk] = aktifHavuz[zorluk].concat(JSON.parse(JSON.stringify(tumSoruHavuzlari[sinif][zorluk])));
+                    }
+                }
+            }
+            
+            // Jokerleri sıfırla
+            jokerElliKullanildi = false; document.getElementById('joker-elli').disabled = false;
+            jokerSeyirciKullanildi = false; document.getElementById('joker-seyirci').disabled = false;
+            jokerDegistirKullanildi = false; document.getElementById('joker-degistir').disabled = false;
+            
+            jokerCiftKullanildi = false; 
+            ciftCevapAktif = false;
+            
+            // Çift Cevap Kilitli Başlar
+            document.getElementById('joker-cift').disabled = true;
+            document.getElementById('joker-cift').innerHTML = 'x2<br>🔒';
+            document.getElementById('joker-cift').classList.add('kilitli');
+            document.getElementById('joker-cift').classList.remove('aktif-joker');
+
+            ekranDegistir('oyun-container');
+            soruGetir();
+        }
+
+        // --- OYUN MANTIĞI ---
+        function guncelleSureBar() {
+            const sureBar = document.getElementById('sure-bar');
+            const yuzde = (kalanSure / 30) * 100;
+            sureBar.style.width = yuzde + "%";
+
+            if (kalanSure > 15) {
+                sureBar.style.backgroundColor = "#2ecc71"; // Yeşil
+            } else if (kalanSure > 5) {
+                sureBar.style.backgroundColor = "#f39c12"; // Turuncu
+            } else {
+                sureBar.style.backgroundColor = "#e74c3c"; // Kırmızı
+            }
+        }
+
+        function agacGuncelle() {
+            const agac = document.getElementById('puan-agaci');
+            agac.innerHTML = '';
+            
+            for(let i = 9; i >= 0; i--) {
+                const li = document.createElement('li');
+                li.innerText = `${i+1}. Soru - ${puanlar[i]}`;
+                
+                if (i === mevcutSoruIndex) li.classList.add('aktif');
+                if (i === 4 || i === 7) li.classList.add('baraj');
+                
+                agac.appendChild(li);
+            }
+        }
+
+        function zamanDoldu() {
+            if(cevapVerildi) return;
+            cevapVerildi = true;
+            
+            gerilimSes.pause();
+            
+            const tumButonlar = document.querySelectorAll('.sik-buton');
+            tumButonlar.forEach(btn => btn.classList.add('tiklama-engelle'));
+            
+            let dogruCevapIndex = aktifSoruData.dogru;
+            const mesajKutusu = document.getElementById('feedback-mesaj');
+            
+            tumButonlar[dogruCevapIndex].classList.add('dogru-cevap');
+            
+            mesajKutusu.innerText = "SÜRE BİTTİ!";
+            mesajKutusu.style.color = "#e74c3c";
+            mesajKutusu.style.display = 'block';
+            
+            document.getElementById('karartma-perdesi').style.opacity = '1';
+            
+            yanlisSes.currentTime = 0;
+            yanlisSes.play().catch(e => console.log("Ses çalınamadı", e));
+            
+            // Süre bitince baraja düş
+            puan = garantiPuan;
+            
+            setTimeout(() => {
+                mesajKutusu.style.display = 'none';
+                document.getElementById('karartma-perdesi').style.opacity = '0';
+                
+                setTimeout(() => {
+                    oyunBitti();
+                }, 4000);
+                
+            }, 10000);
+        }
+
+        // --- SORU ÇEKME VE KARIŞTIRMA (SHUFFLE) ---
+        function rastgeleSoruCek(seviyeIndex) {
+            let zorluk = seviyeIndex + 1;
+            let havuz = aktifHavuz[zorluk];
+            
+            if (!havuz || havuz.length === 0) {
+                return { soru: `${secilenSinifKademesi}. Sınıflar için ${zorluk}. Zorlukta soru kalmadı! Lütfen koda soru ekleyin.`, siklar: ["A", "B", "C", "D"], dogru: 0, puan: puanlar[seviyeIndex] };
+            }
+            
+            let rastgeleIndex = Math.floor(Math.random() * havuz.length);
+            let secilenOrijinalSoru = havuz[rastgeleIndex];
+            
+            // Seçilen soruyu aktif havuzdan çıkar (aynı soru tekrar çıkmasın)
+            havuz.splice(rastgeleIndex, 1);
+            
+            // Şıkları karıştır ve doğru cevabı takip et
+            let dogruCevapMetni = secilenOrijinalSoru.siklar[secilenOrijinalSoru.dogru];
+            let karisikSiklar = [...secilenOrijinalSoru.siklar];
+            
+            karisikSiklar.sort(() => Math.random() - 0.5); // Shuffle
+            
+            let yeniDogruIndex = karisikSiklar.indexOf(dogruCevapMetni);
+            
+            return {
+                soru: secilenOrijinalSoru.soru,
+                siklar: karisikSiklar,
+                dogru: yeniDogruIndex,
+                puan: puanlar[seviyeIndex]
+            };
+        }
+
+        function soruGetir() {
+            cevapVerildi = false;
+            secilenIndexGlobal = null;
+            secilenButonGlobal = null;
+            clearInterval(sureInterval);
+            
+            document.querySelectorAll('.sik-buton').forEach(btn => {
+                btn.classList.remove('dogru-cevap', 'yanlis-cevap', 'secilen-cevap', 'tiklama-engelle');
+                btn.style.visibility = 'visible';
+            });
+            ciftCevapAktif = false;
+            ciftCevapHataSayisi = 0;
+            document.getElementById('joker-cift').classList.remove('aktif-joker');
+            document.getElementById('feedback-mesaj').style.display = 'none';
+            document.getElementById('baraj-mesaj').style.display = 'none';
+            document.getElementById('odul-mesaj').style.display = 'none';
+            document.getElementById('devam-buton').style.display = 'none';
+            document.getElementById('karartma-perdesi').style.opacity = '0';
+
+            agacGuncelle(); 
+
+            // Soruyu havuzdan çek ve karıştır
+            aktifSoruData = rastgeleSoruCek(mevcutSoruIndex);
+            
+            const soruKutusu = document.getElementById('soru-metni');
+            const siklarKutusu = document.getElementById('siklar-kutusu');
+            
+            soruKutusu.style.animation = 'none';
+            siklarKutusu.style.animation = 'none';
+            void soruKutusu.offsetWidth; 
+            soruKutusu.style.animation = 'fadeInDown 0.6s ease-out';
+            siklarKutusu.style.animation = 'fadeInUp 0.8s ease-out';
+
+            soruKutusu.innerText = aktifSoruData.soru;
+            document.getElementById('soru-sayac').innerText = mevcutSoruIndex + 1;
+            
+            document.getElementById('sik-a').innerText = aktifSoruData.siklar[0];
+            document.getElementById('sik-b').innerText = aktifSoruData.siklar[1];
+            document.getElementById('sik-c').innerText = aktifSoruData.siklar[2];
+            document.getElementById('sik-d').innerText = aktifSoruData.siklar[3];
+
+            // İlk 5 soruda süre var, sonrasında yok
+            const sureKapsayici = document.getElementById('sure-kapsayici');
+            if (mevcutSoruIndex >= 5) {
+                sureKapsayici.style.display = 'none';
+            } else {
+                sureKapsayici.style.display = 'block';
+                kalanSure = 30;
+                guncelleSureBar();
+                
+                sureInterval = setInterval(() => {
+                    kalanSure--;
+                    guncelleSureBar();
+                    if(kalanSure <= 0) {
+                        clearInterval(sureInterval);
+                        zamanDoldu();
+                    }
+                }, 1000);
+            }
+        }
+
+        // --- SONRAKİ SORUYA GEÇİŞ (BUTONLA TETİKLENİR) ---
+        function sonrakiSoruyaGec() {
+            document.getElementById('devam-buton').style.display = 'none';
+            document.getElementById('baraj-mesaj').style.display = 'none';
+            document.getElementById('odul-mesaj').style.display = 'none';
+            document.getElementById('karartma-perdesi').style.opacity = '0';
+            
+            mevcutSoruIndex++;
+            if(mevcutSoruIndex < 10) {
+                soruGetir();
+            } else {
+                oyunBitti();
+            }
+        }
+
+        function cevapKontrol(secilenIndex, tiklananButon) {
+            if(cevapVerildi) return;
+            
+            // --- İLK TIKLAMA (Emin Misiniz?) ---
+            if (secilenIndexGlobal !== secilenIndex) {
+                if (secilenButonGlobal) {
+                    secilenButonGlobal.classList.remove('secilen-cevap');
+                }
+                
+                secilenIndexGlobal = secilenIndex;
+                secilenButonGlobal = tiklananButon;
+                tiklananButon.classList.add('secilen-cevap');
+                
+                // İlk tıklamada süreyi durdur (Yarışmacı düşünsün)
+                clearInterval(sureInterval);
+                
+                // Gerilimi başlat
+                gerilimSes.currentTime = 0;
+                gerilimSes.play().catch(e => console.log("Ses çalınamadı", e));
+                
+                return; 
+            }
+
+            // --- İKİNCİ TIKLAMA (Son Kararım!) ---
+            cevapVerildi = true;
+            gerilimSes.pause(); 
+            
+            const tumButonlar = document.querySelectorAll('.sik-buton');
+            tumButonlar.forEach(btn => btn.classList.add('tiklama-engelle'));
+
+            let dogruCevapIndex = aktifSoruData.dogru;
+            const mesajKutusu = document.getElementById('feedback-mesaj');
+
+            // --- DOĞRU CEVAP ---
+            if(secilenIndex === dogruCevapIndex) {
+                puan = aktifSoruData.puan; 
+                
+                tiklananButon.classList.remove('secilen-cevap');
+                tiklananButon.classList.add('dogru-cevap'); 
+                
+                mesajKutusu.innerText = "DOĞRU!";
+                mesajKutusu.style.color = "#2ecc71"; 
+                mesajKutusu.style.display = 'block';
+
+                dogruSes.currentTime = 0;
+                dogruSes.play().catch(e => console.log("Ses çalınamadı", e));
+
+                // --- ZİNCİRLEME ANİMASYONLAR VE ARA EKRAN ---
+                if (mevcutSoruIndex === 4 || mevcutSoruIndex === 7) {
+                    // Baraj Sorusu İse
+                    let barajPuani = (mevcutSoruIndex === 4) ? 50 : 300;
+                    garantiPuan = barajPuani;
+                    
+                    setTimeout(() => {
+                        mesajKutusu.style.display = 'none'; // Doğru yazısı gizlenir
+                        document.getElementById('karartma-perdesi').style.opacity = '0.8'; // Arka plan hafif karartılır
+                        
+                        const barajMesaj = document.getElementById('baraj-mesaj');
+                        barajMesaj.innerText = `TEBRİKLER! ${mevcutSoruIndex === 4 ? '1.' : '2.'} BARAJI GEÇTİNİZ!\n(${barajPuani} PUAN GARANTİLENDİ)`;
+                        barajMesaj.style.display = 'block';
+                        
+                        // Ödül varsa (Sadece 1. Baraj)
+                        if (mevcutSoruIndex === 4) {
+                            setTimeout(() => {
+                                // X2 Jokerinin kilidini aç
+                                document.getElementById('joker-cift').classList.remove('kilitli');
+                                document.getElementById('joker-cift').disabled = false;
+                                document.getElementById('joker-cift').innerHTML = 'x2';
+                                
+                                const odulMesaj = document.getElementById('odul-mesaj');
+                                odulMesaj.innerText = "SİZE BİR ÖDÜLÜMÜZ VAR:\nÇİFT CEVAP JOKERİ KAZANDINIZ!";
+                                odulMesaj.style.display = 'block';
+                                
+                                setTimeout(() => {
+                                    document.getElementById('devam-buton').style.display = 'block';
+                                }, 2000); // Ödülden 2 sn sonra devam butonu çıksın
+                                
+                            }, 2000); // Baraj yazısından 2 sn sonra ödül çıksın
+                        } else {
+                            setTimeout(() => {
+                                document.getElementById('devam-buton').style.display = 'block';
+                            }, 2000); // 2. barajda ödül yoksa sadece bekle ve devam butonu çıksın
+                        }
+                    }, 1500); // "DOĞRU!" yazısından 1.5 sn sonra
+                } 
+                else {
+                    // Normal Sorular
+                    setTimeout(() => {
+                        mesajKutusu.style.display = 'none';
+                        document.getElementById('karartma-perdesi').style.opacity = '0.7';
+                        document.getElementById('devam-buton').style.display = 'block';
+                    }, 2000); // "DOĞRU!" yazısından 2 sn sonra devam butonu çıkar
+                }
+            } 
+            // --- YANLIŞ CEVAP ---
+            else {
+                if (ciftCevapAktif && ciftCevapHataSayisi === 0) {
+                    ciftCevapHataSayisi++;
+                    tiklananButon.classList.remove('secilen-cevap');
+                    tiklananButon.classList.add('yanlis-cevap');
+                    tiklananButon.classList.add('tiklama-engelle');
+                    
+                    yanlisSes.currentTime = 0;
+                    yanlisSes.play().catch(e => console.log("Ses çalınamadı", e));
+                    
+                    mesajKutusu.innerText = "YANLIŞ! BİR HAKKIN DAHA VAR!";
+                    mesajKutusu.style.color = "#f39c12"; 
+                    mesajKutusu.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        mesajKutusu.style.display = 'none';
+                        cevapVerildi = false;
+                        secilenIndexGlobal = null;
+                        secilenButonGlobal = null;
+                        tumButonlar.forEach(btn => {
+                           if (!btn.classList.contains('yanlis-cevap') && btn.style.visibility !== 'hidden') {
+                               btn.classList.remove('tiklama-engelle');
+                           }
+                        });
+                    }, 2000);
+                } else {
+                    tiklananButon.classList.remove('secilen-cevap');
+                    tiklananButon.classList.add('yanlis-cevap'); 
+                    tumButonlar[dogruCevapIndex].classList.add('dogru-cevap');
+
+                    mesajKutusu.innerText = "OYUN BİTTİ!";
+                    mesajKutusu.style.color = "#e74c3c"; 
+                    
+                    document.getElementById('karartma-perdesi').style.opacity = '1';
+                    
+                    yanlisSes.currentTime = 0;
+                    yanlisSes.play().catch(e => console.log("Ses çalınamadı", e));
+
+                    mesajKutusu.style.display = 'block';
+
+                    // Baraja düş
+                    puan = garantiPuan;
+
+                    setTimeout(() => {
+                        mesajKutusu.style.display = 'none';
+                        document.getElementById('karartma-perdesi').style.opacity = '0';
+                        
+                        setTimeout(() => {
+                            oyunBitti();
+                        }, 4000);
+                    }, 10000);
+                }
+            }
+        }
+
+        // --- OYUN BİTİŞİ ---
+        function oyunBitti() {
+            clearInterval(sureInterval); 
+            gerilimSes.pause();
+            
+            ekranDegistir('sonuc-container');
+            
+            if (mevcutSoruIndex >= 10 && puan === 1000) {
+                document.getElementById('sonuc-baslik').innerText = "ZİRVEYE ULAŞTIN " + oyuncuIsmi.toUpperCase() + "!";
+                document.getElementById('sonuc-baslik').style.color = "#e2d810";
+            } else {
+                document.getElementById('sonuc-baslik').innerText = "YARIŞMA BİTTİ " + oyuncuIsmi.toUpperCase();
+                document.getElementById('sonuc-baslik').style.color = "#ffffff";
+            }
+            
+            document.getElementById('sonuc-puan').innerText = "TOPLAM PUANIN: " + puan;
+            skoruKaydet(oyuncuIsmi, puan, secilenSinifKademesi);
+            skorTablosunuGoster();
+        }
+
+        // --- JOKER FONKSİYONLARI ---
+        function kullanElli() {
+            if (jokerElliKullanildi || cevapVerildi) return;
+            jokerElliKullanildi = true;
+            document.getElementById('joker-elli').disabled = true;
+            
+            let dogruIndex = aktifSoruData.dogru;
+            let yanlisIndexler = [0, 1, 2, 3].filter(i => i !== dogruIndex);
+            yanlisIndexler.sort(() => Math.random() - 0.5);
+            
+            let gizlenecek1 = yanlisIndexler[0];
+            let gizlenecek2 = yanlisIndexler[1];
+            
+            const butonlar = document.querySelectorAll('.sik-buton');
+            butonlar[gizlenecek1].style.visibility = 'hidden';
+            butonlar[gizlenecek2].style.visibility = 'hidden';
+        }
+
+        let seyirciInterval;
+        function kullanSeyirci() {
+            if (jokerSeyirciKullanildi || cevapVerildi) return;
+            jokerSeyirciKullanildi = true;
+            document.getElementById('joker-seyirci').disabled = true;
+            
+            clearInterval(sureInterval); // Ana süreyi dondur
+            
+            let seyirciSure = 30;
+            const modal = document.getElementById('seyirci-modal');
+            const rakam = document.getElementById('seyirci-sayac-rakam');
+            const cember = document.getElementById('sayac-cember');
+            
+            modal.style.display = 'flex';
+            rakam.innerText = seyirciSure;
+            cember.style.background = `conic-gradient(#fca311 100%, transparent 0)`;
+            
+            seyirciInterval = setInterval(() => {
+                seyirciSure--;
+                rakam.innerText = seyirciSure;
+                
+                let yuzde = (seyirciSure / 30) * 100;
+                cember.style.background = `conic-gradient(#fca311 ${yuzde}%, transparent 0)`;
+                
+                if(seyirciSure <= 0) {
+                    clearInterval(seyirciInterval);
+                    modal.style.display = 'none';
+                    
+                    // Ana süreyi tekrar devam ettir
+                    if (mevcutSoruIndex < 5 && !cevapVerildi) {
+                        sureInterval = setInterval(() => {
+                            kalanSure--;
+                            guncelleSureBar();
+                            if(kalanSure <= 0) {
+                                clearInterval(sureInterval);
+                                zamanDoldu();
+                            }
+                        }, 1000);
+                    }
+                }
+            }, 1000);
+        }
+
+        function kullanCiftCevap() {
+            if (jokerCiftKullanildi || cevapVerildi) return;
+            jokerCiftKullanildi = true;
+            document.getElementById('joker-cift').disabled = true;
+            
+            ciftCevapAktif = true;
+            ciftCevapHataSayisi = 0;
+            document.getElementById('joker-cift').classList.add('aktif-joker');
+        }
+
+        function kullanDegistir() {
+            if (jokerDegistirKullanildi || cevapVerildi) return;
+            jokerDegistirKullanildi = true;
+            document.getElementById('joker-degistir').disabled = true;
+            
+            // Mevcut zorluk seviyesinden başka bir soru getir
+            soruGetir(); 
+        }
+
+        // --- SKOR SİSTEMİ ---
+        function skoruKaydet(isim, yeniPuan, sinifBilgisi) {
+            let skorlar = JSON.parse(localStorage.getItem('odyolog_skorlar')) || [];
+            skorlar.push({ isim: `${isim} (${sinifBilgisi}. Sınıf)`, puan: yeniPuan });
+            skorlar.sort((a, b) => b.puan - a.puan);
+            skorlar = skorlar.slice(0, 5);
+            localStorage.setItem('odyolog_skorlar', JSON.stringify(skorlar));
+        }
+
+        function skorTablosunuGoster() {
+            let skorlar = JSON.parse(localStorage.getItem('odyolog_skorlar')) || [];
+            let listeHTML = "";
+            if(skorlar.length === 0) {
+                listeHTML = "<div style='text-align:center; color:#ccc'>Henüz kayıt yok.</div>";
+            } else {
+                skorlar.forEach((kayit, index) => {
+                    listeHTML += `<div class="skor-satir"><span>${index + 1}. ${kayit.isim}</span><span>${kayit.puan} Puan</span></div>`;
+                });
+            }
+            document.getElementById('skor-listesi').innerHTML = listeHTML;
+        }
+    </script>
+
+</body>
+</html>
