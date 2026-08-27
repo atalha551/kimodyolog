@@ -538,55 +538,110 @@
         box-shadow: 0 0 15px #2ecc71;
     }
 
-    /* Seyirci Sayacı Yuvarlak */
+    /* Seyirci Oylama Paneli */
     #seyirci-modal {
         display: none;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: rgba(0,0,0,0.95);
+        background: rgba(0,0,0,0.96);
         border: 4px solid #fca311;
-        border-radius: 50%;
-        width: 250px;
-        height: 250px;
+        border-radius: 20px;
+        width: 480px;
+        padding: 25px 30px 20px;
         z-index: 200;
         color: white;
         font-family: 'Bangers', cursive;
         text-align: center;
         box-shadow: 0 0 40px #fca311;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
     }
 
-    .sayac-baslik {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-        letter-spacing: 2px;
-    }
-
-    .sayac-cember {
-        position: relative;
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        background: conic-gradient(#fca311 100%, transparent 0);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .sayac-ic {
-        width: 100px;
-        height: 100px;
-        background: #000;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 3rem;
+    .seyirci-baslik {
+        font-size: 2rem;
+        letter-spacing: 3px;
         color: #fca311;
+    }
+
+    .seyirci-durum {
+        font-family: 'Roboto', sans-serif;
+        font-size: 0.95rem;
+        letter-spacing: 1px;
+        color: #cfd6e4;
+        margin-bottom: 18px;
+        min-height: 22px;
+    }
+
+    .seyirci-grafik {
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-end;
+        gap: 14px;
+        width: 100%;
+        height: 190px;
+    }
+
+    .seyirci-sutun {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+    }
+
+    .seyirci-yuzde {
+        font-size: 1.6rem;
+        color: #fca311;
+        margin-bottom: 4px;
+    }
+
+    .seyirci-cubuk-yuva {
+        flex: 1;
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        background: rgba(255,255,255,0.06);
+        border-radius: 6px 6px 0 0;
+    }
+
+    .seyirci-cubuk {
+        width: 100%;
+        height: 0%;
+        background: linear-gradient(180deg, #fca311 0%, #d97706 100%);
+        border-radius: 6px 6px 0 0;
+        transition: height 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .seyirci-harf {
+        font-size: 1.5rem;
+        margin-top: 6px;
+        color: white;
+        border-top: 2px solid #fca311;
+        width: 100%;
+    }
+
+    #seyirci-kapat {
+        margin-top: 18px;
+        font-size: 16px;
+        padding: 10px 26px;
+        visibility: hidden;
+    }
+
+    /* Şık butonlarındaki kalıcı seyirci yüzdesi */
+    .seyirci-rozet {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #fca311;
+        color: #000;
+        font-family: 'Bangers', cursive;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        padding: 2px 10px;
+        border-radius: 20px;
     }
 
     /* --- YENİ EKLENEN ANİMASYONLU YAZILAR VE BUTON --- */
@@ -664,9 +719,12 @@
         .skor-tablosu { width: 100%; }
         .buton { font-size: 18px; padding: 12px 30px; }
         
-        #seyirci-modal { width: 200px; height: 200px; }
-        .sayac-cember { width: 100px; height: 100px; }
-        .sayac-ic { width: 80px; height: 80px; font-size: 2.5rem; }
+        #seyirci-modal { width: 92%; padding: 18px 15px 15px; }
+        .seyirci-baslik { font-size: 1.5rem; }
+        .seyirci-grafik { height: 140px; gap: 8px; }
+        .seyirci-yuzde { font-size: 1.2rem; }
+        .seyirci-harf { font-size: 1.2rem; }
+        .seyirci-rozet { font-size: 0.9rem; padding: 2px 7px; right: 8px; }
     }
 
 </style>
@@ -710,10 +768,10 @@
             <button id="devam-buton" class="buton" onclick="sonrakiSoruyaGec()">SIRADAKİ SORUYA GEÇ</button>
 
             <div id="seyirci-modal">
-                <div class="sayac-baslik">SEYİRCİ SÜRESİ</div>
-                <div class="sayac-cember" id="sayac-cember">
-                    <div class="sayac-ic" id="seyirci-sayac-rakam">30</div>
-                </div>
+                <div class="seyirci-baslik">SEYİRCİ OYLAMASI</div>
+                <div class="seyirci-durum" id="seyirci-durum">Seyirci oy kullanıyor...</div>
+                <div class="seyirci-grafik" id="seyirci-grafik"></div>
+                <button class="buton" id="seyirci-kapat" onclick="kapatSeyirci()">DEVAM ET</button>
             </div>
 
             <div class="oyun-icerik">
@@ -1222,6 +1280,10 @@
                 btn.classList.remove('dogru-cevap', 'yanlis-cevap', 'secilen-cevap', 'tiklama-engelle');
                 btn.style.visibility = 'visible';
             });
+            // Önceki sorunun seyirci sonuçları yeni soruya taşınmasın
+            clearInterval(seyirciAnimasyonInterval);
+            document.getElementById('seyirci-modal').style.display = 'none';
+            temizleSeyirciRozetleri();
             ciftCevapAktif = false;
             ciftCevapHataSayisi = 0;
             document.getElementById('joker-cift').classList.remove('aktif-joker');
@@ -1261,16 +1323,23 @@
                 sureKapsayici.style.display = 'block';
                 kalanSure = 30;
                 guncelleSureBar();
-                
-                sureInterval = setInterval(() => {
-                    kalanSure--;
-                    guncelleSureBar();
-                    if(kalanSure <= 0) {
-                        clearInterval(sureInterval);
-                        zamanDoldu();
-                    }
-                }, 1000);
+                sureyiBaslat();
             }
+        }
+
+        // Soru süresini (yeniden) çalıştırır — hem yeni soruda hem joker sonrası kullanılır
+        function sureyiBaslat() {
+            clearInterval(sureInterval);
+            if (mevcutSoruIndex >= 5 || cevapVerildi) return;
+
+            sureInterval = setInterval(() => {
+                kalanSure--;
+                guncelleSureBar();
+                if(kalanSure <= 0) {
+                    clearInterval(sureInterval);
+                    zamanDoldu();
+                }
+            }, 1000);
         }
 
         // --- SONRAKİ SORUYA GEÇİŞ (BUTONLA TETİKLENİR) ---
@@ -1476,47 +1545,162 @@
             butonlar[gizlenecek2].style.visibility = 'hidden';
         }
 
-        let seyirciInterval;
+        /* --- SEYİRCİ JOKERİ ---
+           Seyirci artık simüle ediliyor: soru zorlaştıkça doğru cevabın oyu düşer
+           ve seyircinin yanlış bir şıkta toplanma (yanılma) ihtimali artar.        */
+        const SEYIRCI_PROFILLERI = [
+            { min: 72, max: 92, yanilma: 0.02 }, // 1. soru  (en kolay)
+            { min: 68, max: 88, yanilma: 0.04 },
+            { min: 63, max: 84, yanilma: 0.07 },
+            { min: 56, max: 78, yanilma: 0.11 },
+            { min: 52, max: 74, yanilma: 0.15 },
+            { min: 47, max: 69, yanilma: 0.19 },
+            { min: 42, max: 63, yanilma: 0.24 },
+            { min: 38, max: 58, yanilma: 0.29 },
+            { min: 34, max: 54, yanilma: 0.34 },
+            { min: 30, max: 50, yanilma: 0.39 }  // 10. soru (en zor)
+        ];
+        const IKI_SIK_GUVEN_BONUSU = 14;   // 50:50 sonrası seyirci daha isabetli olur
+        const YANILMA_GUVEN_KAYBI = 0.35;  // Seyirci yanıldığında doğru cevabın payı bu orana iner
+        const TUZAK_AGIRLIK_CARPANI = 2.0; // Yanıltıcı şık, diğer yanlışlardan daha çok oy toplar
+        const SEYIRCI_OYLAMA_SURESI = 2200;
+
+        let seyirciAnimasyonInterval;
+
+        function rastgeleTamSayi(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // 50:50 sonrası elenen şıklar oylamaya girmez
+        function gorunurSikIndexleri() {
+            const butonlar = document.querySelectorAll('.sik-buton');
+            return [0, 1, 2, 3].filter(i => butonlar[i].style.visibility !== 'hidden');
+        }
+
+        // Kalan yüzdeyi yanlış şıklara rastgele ama toplamı tam 100 olacak şekilde dağıtır
+        function dagitKalanPay(oranlar, indexler, kalan, tuzakIndex) {
+            if (indexler.length === 0) return;
+
+            const agirliklar = indexler.map(i => (0.2 + Math.random()) * (i === tuzakIndex ? TUZAK_AGIRLIK_CARPANI : 1));
+            const toplamAgirlik = agirliklar.reduce((a, b) => a + b, 0);
+
+            let dagitilan = 0;
+            indexler.forEach((sikIndex, i) => {
+                const sonSik = (i === indexler.length - 1);
+                const pay = sonSik
+                    ? Math.max(0, kalan - dagitilan)
+                    : Math.round(kalan * agirliklar[i] / toplamAgirlik);
+                oranlar[sikIndex] = pay;
+                dagitilan += pay;
+            });
+        }
+
+        function seyirciOranlariUret() {
+            const dogruIndex = aktifSoruData.dogru;
+            const acikIndexler = gorunurSikIndexleri();
+            const profil = SEYIRCI_PROFILLERI[Math.min(mevcutSoruIndex, SEYIRCI_PROFILLERI.length - 1)];
+
+            let dogruPay = rastgeleTamSayi(profil.min, profil.max);
+            let yanilmaSansi = profil.yanilma;
+
+            if (acikIndexler.length === 2) {
+                dogruPay = Math.min(94, dogruPay + IKI_SIK_GUVEN_BONUSU);
+                yanilmaSansi = yanilmaSansi / 2;
+            }
+
+            const yanlisIndexler = acikIndexler.filter(i => i !== dogruIndex);
+            const tuzakIndex = yanlisIndexler[rastgeleTamSayi(0, yanlisIndexler.length - 1)];
+            const seyirciYanildi = Math.random() < yanilmaSansi;
+
+            // Seyirci yanıldıysa doğru cevaba olan güven kırılır
+            if (seyirciYanildi) {
+                dogruPay = Math.round(dogruPay * (YANILMA_GUVEN_KAYBI + Math.random() * 0.25));
+            }
+
+            const oranlar = [0, 0, 0, 0];
+            oranlar[dogruIndex] = dogruPay;
+            dagitKalanPay(oranlar, yanlisIndexler, 100 - dogruPay, tuzakIndex);
+
+            // Yanılma durumunda tuzak şık mutlaka önde bitsin
+            if (seyirciYanildi && oranlar[tuzakIndex] < oranlar[dogruIndex]) {
+                const takas = oranlar[tuzakIndex];
+                oranlar[tuzakIndex] = oranlar[dogruIndex];
+                oranlar[dogruIndex] = takas;
+            }
+
+            return oranlar;
+        }
+
         function kullanSeyirci() {
             if (jokerSeyirciKullanildi || cevapVerildi) return;
             jokerSeyirciKullanildi = true;
             document.getElementById('joker-seyirci').disabled = true;
-            
-            clearInterval(sureInterval); // Ana süreyi dondur
-            
-            let seyirciSure = 30;
-            const modal = document.getElementById('seyirci-modal');
-            const rakam = document.getElementById('seyirci-sayac-rakam');
-            const cember = document.getElementById('sayac-cember');
-            
-            modal.style.display = 'flex';
-            rakam.innerText = seyirciSure;
-            cember.style.background = `conic-gradient(#fca311 100%, transparent 0)`;
-            
-            seyirciInterval = setInterval(() => {
-                seyirciSure--;
-                rakam.innerText = seyirciSure;
-                
-                let yuzde = (seyirciSure / 30) * 100;
-                cember.style.background = `conic-gradient(#fca311 ${yuzde}%, transparent 0)`;
-                
-                if(seyirciSure <= 0) {
-                    clearInterval(seyirciInterval);
-                    modal.style.display = 'none';
-                    
-                    // Ana süreyi tekrar devam ettir
-                    if (mevcutSoruIndex < 5 && !cevapVerildi) {
-                        sureInterval = setInterval(() => {
-                            kalanSure--;
-                            guncelleSureBar();
-                            if(kalanSure <= 0) {
-                                clearInterval(sureInterval);
-                                zamanDoldu();
-                            }
-                        }, 1000);
-                    }
-                }
-            }, 1000);
+
+            clearInterval(sureInterval); // Oylama boyunca ana süreyi dondur
+
+            const oranlar = seyirciOranlariUret();
+            const acikIndexler = gorunurSikIndexleri();
+            const harfler = ['A', 'B', 'C', 'D'];
+
+            const grafik = document.getElementById('seyirci-grafik');
+            const durum = document.getElementById('seyirci-durum');
+            const kapatButon = document.getElementById('seyirci-kapat');
+
+            grafik.innerHTML = acikIndexler.map(i => `
+                <div class="seyirci-sutun">
+                    <div class="seyirci-yuzde" data-sik="${i}">--</div>
+                    <div class="seyirci-cubuk-yuva"><div class="seyirci-cubuk" data-sik="${i}"></div></div>
+                    <div class="seyirci-harf">${harfler[i]}</div>
+                </div>
+            `).join('');
+
+            durum.innerText = 'Seyirci oy kullanıyor...';
+            kapatButon.style.visibility = 'hidden';
+            document.getElementById('seyirci-modal').style.display = 'flex';
+
+            const cubuklar = grafik.querySelectorAll('.seyirci-cubuk');
+
+            // Oylama gerilimi: sonuç netleşene kadar çubuklar oynasın
+            seyirciAnimasyonInterval = setInterval(() => {
+                cubuklar.forEach(cubuk => { cubuk.style.height = `${rastgeleTamSayi(10, 90)}%`; });
+            }, 180);
+
+            setTimeout(() => {
+                clearInterval(seyirciAnimasyonInterval);
+
+                const enYuksek = Math.max(...oranlar);
+                cubuklar.forEach(cubuk => {
+                    const sikIndex = Number(cubuk.dataset.sik);
+                    // En yüksek oy tavana yaslansın, diğerleri ona göre ölçeklensin
+                    cubuk.style.height = `${(oranlar[sikIndex] / enYuksek) * 100}%`;
+                });
+                grafik.querySelectorAll('.seyirci-yuzde').forEach(etiket => {
+                    etiket.innerText = `%${oranlar[Number(etiket.dataset.sik)]}`;
+                });
+
+                durum.innerText = 'Seyircinin kararı bu yönde.';
+                kapatButon.style.visibility = 'visible';
+                seyirciOranlariniSiklaraIsle(oranlar, acikIndexler);
+            }, SEYIRCI_OYLAMA_SURESI);
+        }
+
+        // Modal kapandıktan sonra da yüzdeler şıkların üzerinde kalsın
+        function seyirciOranlariniSiklaraIsle(oranlar, acikIndexler) {
+            const butonlar = document.querySelectorAll('.sik-buton');
+            temizleSeyirciRozetleri();
+            acikIndexler.forEach(i => {
+                butonlar[i].insertAdjacentHTML('beforeend', `<span class="seyirci-rozet">%${oranlar[i]}</span>`);
+            });
+        }
+
+        function temizleSeyirciRozetleri() {
+            document.querySelectorAll('.seyirci-rozet').forEach(rozet => rozet.remove());
+        }
+
+        function kapatSeyirci() {
+            clearInterval(seyirciAnimasyonInterval);
+            document.getElementById('seyirci-modal').style.display = 'none';
+            sureyiBaslat(); // Ana süre kaldığı yerden devam etsin
         }
 
         function kullanCiftCevap() {
